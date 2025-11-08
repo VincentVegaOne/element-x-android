@@ -10,6 +10,7 @@ package io.element.android.features.preferences.impl.advanced
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.media.MediaPreviewValue
+import io.element.android.libraries.preferences.api.store.AppIcon
 import io.element.android.libraries.preferences.api.store.VideoCompressionPreset
 
 open class AdvancedSettingsStateProvider : PreviewParameterProvider<AdvancedSettingsState> {
@@ -35,6 +36,7 @@ fun aAdvancedSettingsState(
     isSharePresenceEnabled: Boolean = false,
     mediaOptimizationState: MediaOptimizationState = MediaOptimizationState.AllMedia(isEnabled = false),
     theme: ThemeOption = ThemeOption.System,
+    appIcon: AppIcon = AppIcon.DEFAULT,
     hideInviteAvatars: Boolean = false,
     timelineMediaPreviewValue: MediaPreviewValue = MediaPreviewValue.On,
     setTimelineMediaPreviewAction: AsyncAction<Unit> = AsyncAction.Uninitialized,
@@ -45,6 +47,7 @@ fun aAdvancedSettingsState(
     isSharePresenceEnabled = isSharePresenceEnabled,
     mediaOptimizationState = mediaOptimizationState,
     theme = theme,
+    appIcon = appIcon,
     mediaPreviewConfigState = MediaPreviewConfigState(
         hideInviteAvatars = hideInviteAvatars,
         timelineMediaPreviewValue = timelineMediaPreviewValue,

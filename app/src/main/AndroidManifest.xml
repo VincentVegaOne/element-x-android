@@ -60,10 +60,11 @@
             android:launchMode="singleTask"
             android:theme="@style/Theme.ElementX.Splash"
             android:windowSoftInputMode="adjustResize">
+            <!-- LAUNCHER intent filter removed - now handled by activity-alias -->
+            <!-- Activity aliases below provide different launcher icons -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <!-- Handle deep-link for notification ./tools/adb/deeplink.sh -->
             <intent-filter>
@@ -172,6 +173,77 @@
                 <category android:name="android.intent.category.OPENABLE" />
             </intent-filter>
         </activity>
+
+        <!-- Activity aliases for app icon switching -->
+        <!-- Default icon (enabled by default) -->
+        <activity-alias
+            android:name=".MainActivityDefault"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Blue icon variant -->
+        <activity-alias
+            android:name=".MainActivityBlue"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_blue"
+            android:roundIcon="@mipmap/ic_launcher_blue_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Purple icon variant -->
+        <activity-alias
+            android:name=".MainActivityPurple"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_purple"
+            android:roundIcon="@mipmap/ic_launcher_purple_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Green icon variant -->
+        <activity-alias
+            android:name=".MainActivityGreen"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_green"
+            android:roundIcon="@mipmap/ic_launcher_green_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Pink icon variant -->
+        <activity-alias
+            android:name=".MainActivityPink"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_pink"
+            android:roundIcon="@mipmap/ic_launcher_pink_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <provider
             android:name="androidx.core.content.FileProvider"

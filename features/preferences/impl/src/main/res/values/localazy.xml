@@ -8,6 +8,9 @@
   <string name="screen_advanced_settings_element_call_base_url">"Custom Element Call base URL"</string>
   <string name="screen_advanced_settings_element_call_base_url_description">"Set a custom base URL for Element Call."</string>
   <string name="screen_advanced_settings_element_call_base_url_validation_error">"Invalid URL, please make sure you include the protocol (http/https) and the correct address."</string>
+  <string name="screen_advanced_settings_app_icon_title">"App icon"</string>
+  <string name="screen_advanced_settings_app_icon_dialog_title">"App icon"</string>
+  <string name="screen_advanced_settings_app_icon_dialog_subtitle">"Choose an icon for your home screen"</string>
   <string name="screen_advanced_settings_hide_invite_avatars_toggle_title">"Hide avatars in room invite requests"</string>
   <string name="screen_advanced_settings_hide_timeline_media_toggle_title">"Hide media previews in timeline"</string>
   <string name="screen_advanced_settings_labs">"Labs"</string>

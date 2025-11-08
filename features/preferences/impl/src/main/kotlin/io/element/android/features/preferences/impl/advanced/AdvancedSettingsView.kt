@@ -41,6 +41,7 @@ import io.element.android.libraries.designsystem.utils.snackbar.SnackbarHost
 import io.element.android.libraries.designsystem.utils.snackbar.collectSnackbarMessageAsState
 import io.element.android.libraries.designsystem.utils.snackbar.rememberSnackbarHostState
 import io.element.android.libraries.matrix.api.media.MediaPreviewValue
+import io.element.android.libraries.preferences.api.store.AppIcon
 import io.element.android.libraries.preferences.api.store.VideoCompressionPreset
 import io.element.android.libraries.ui.strings.CommonStrings
 import io.element.android.services.analytics.compose.LocalAnalyticsService
@@ -78,6 +79,30 @@ fun AdvancedSettingsView(
                 state.eventSink(AdvancedSettingsEvents.SetTheme(themeOption))
             }
         )
+
+        var displayAppIconDialog by remember { mutableStateOf(false) }
+
+        ListItem(
+            headlineContent = {
+                Text(text = stringResource(id = R.string.screen_advanced_settings_app_icon_title))
+            },
+            supportingContent = {
+                Text(text = state.appIcon.displayName)
+            },
+            onClick = { displayAppIconDialog = true },
+        )
+
+        if (displayAppIconDialog) {
+            AppIconSelectorDialog(
+                selectedIcon = state.appIcon,
+                onSubmit = { icon ->
+                    state.eventSink(AdvancedSettingsEvents.SetAppIcon(icon))
+                    displayAppIconDialog = false
+                },
+                onDismiss = { displayAppIconDialog = false },
+            )
+        }
+
         ListItem(
             headlineContent = {
                 Text(text = stringResource(id = CommonStrings.action_view_source))
@@ -189,6 +214,46 @@ fun AdvancedSettingsView(
         }
 
         ModerationAndSafety(state)
+    }
+}
+
+@Composable
+private fun AppIconSelectorDialog(
+    selectedIcon: AppIcon,
+    onSubmit: (AppIcon) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val icons = AppIcon.entries
+    var localSelectedIcon by remember { mutableStateOf(selectedIcon) }
+    ListDialog(
+        title = stringResource(R.string.screen_advanced_settings_app_icon_dialog_title),
+        subtitle = stringResource(R.string.screen_advanced_settings_app_icon_dialog_subtitle),
+        onSubmit = { onSubmit(localSelectedIcon) },
+        onDismissRequest = onDismiss,
+        applyPaddingToContents = false,
+    ) {
+        for (icon in icons) {
+            val isSelected = icon == localSelectedIcon
+            item(
+                key = icon,
+                contentType = icon,
+            ) {
+                ListItem(
+                    headlineContent = {
+                        Text(
+                            text = icon.displayName,
+                            style = ElementTheme.typography.fontBodyLgMedium,
+                        )
+                    },
+                    leadingContent = ListItemContent.RadioButton(
+                        selected = isSelected,
+                    ),
+                    onClick = {
+                        localSelectedIcon = icon
+                    },
+                )
+            }
+        }
     }
 }
 

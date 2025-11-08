@@ -17,6 +17,7 @@ import io.element.android.libraries.core.meta.BuildType
 import io.element.android.libraries.matrix.api.media.MediaPreviewValue
 import io.element.android.libraries.matrix.api.tracing.LogLevel
 import io.element.android.libraries.matrix.api.tracing.TraceLogPack
+import io.element.android.libraries.preferences.api.store.AppIcon
 import io.element.android.libraries.preferences.api.store.AppPreferencesStore
 import io.element.android.libraries.preferences.api.store.PreferenceDataStoreFactory
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +30,7 @@ private val hideInviteAvatarsKey = booleanPreferencesKey("hideInviteAvatars")
 private val timelineMediaPreviewValueKey = stringPreferencesKey("timelineMediaPreviewValue")
 private val logLevelKey = stringPreferencesKey("logLevel")
 private val traceLogPacksKey = stringPreferencesKey("traceLogPacks")
+private val appIconKey = stringPreferencesKey("appIcon")
 
 @ContributesBinding(AppScope::class)
 class DefaultAppPreferencesStore(
@@ -140,6 +142,18 @@ class DefaultAppPreferencesStore(
                 ?.mapNotNull { value -> TraceLogPack.entries.find { it.key == value } }
                 ?.toSet()
                 ?: emptySet()
+        }
+    }
+
+    override suspend fun setAppIcon(appIcon: AppIcon) {
+        store.edit { prefs ->
+            prefs[appIconKey] = appIcon.name
+        }
+    }
+
+    override fun getAppIconFlow(): Flow<AppIcon> {
+        return store.data.map { prefs ->
+            prefs[appIconKey]?.let { AppIcon.valueOf(it) } ?: AppIcon.DEFAULT
         }
     }
 

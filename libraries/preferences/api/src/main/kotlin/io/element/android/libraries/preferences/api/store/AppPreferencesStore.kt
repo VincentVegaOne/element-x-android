@@ -37,5 +37,8 @@ interface AppPreferencesStore {
     suspend fun setTracingLogPacks(targets: Set<TraceLogPack>)
     fun getTracingLogPacksFlow(): Flow<Set<TraceLogPack>>
 
+    suspend fun setAppIcon(appIcon: AppIcon)
+    fun getAppIconFlow(): Flow<AppIcon>
+
     suspend fun reset()
 }

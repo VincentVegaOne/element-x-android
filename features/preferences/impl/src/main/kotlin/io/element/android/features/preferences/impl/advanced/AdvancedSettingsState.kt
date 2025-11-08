@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.res.stringResource
 import io.element.android.libraries.designsystem.components.preferences.DropdownOption
+import io.element.android.libraries.preferences.api.store.AppIcon
 import io.element.android.libraries.preferences.api.store.VideoCompressionPreset
 import io.element.android.libraries.ui.strings.CommonStrings
 
@@ -19,6 +20,7 @@ data class AdvancedSettingsState(
     val isSharePresenceEnabled: Boolean,
     val mediaOptimizationState: MediaOptimizationState?,
     val theme: ThemeOption,
+    val appIcon: AppIcon,
     val mediaPreviewConfigState: MediaPreviewConfigState,
     val eventSink: (AdvancedSettingsEvents) -> Unit
 )

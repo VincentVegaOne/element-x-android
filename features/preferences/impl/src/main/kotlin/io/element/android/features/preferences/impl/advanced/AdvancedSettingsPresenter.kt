@@ -20,6 +20,8 @@ import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.di.annotations.SessionCoroutineScope
 import io.element.android.libraries.featureflag.api.FeatureFlagService
 import io.element.android.libraries.featureflag.api.FeatureFlags
+import io.element.android.libraries.preferences.api.store.AppIcon
+import io.element.android.libraries.preferences.api.store.AppIconService
 import io.element.android.libraries.preferences.api.store.AppPreferencesStore
 import io.element.android.libraries.preferences.api.store.SessionPreferencesStore
 import kotlinx.coroutines.CoroutineScope
@@ -32,6 +34,7 @@ class AdvancedSettingsPresenter(
     private val appPreferencesStore: AppPreferencesStore,
     private val sessionPreferencesStore: SessionPreferencesStore,
     private val mediaPreviewConfigStateStore: MediaPreviewConfigStateStore,
+    private val appIconService: AppIconService,
     @SessionCoroutineScope
     private val sessionCoroutineScope: CoroutineScope,
     private val featureFlagService: FeatureFlagService,
@@ -47,6 +50,10 @@ class AdvancedSettingsPresenter(
         val theme = remember {
             appPreferencesStore.getThemeFlow().mapToTheme()
         }.collectAsState(initial = Theme.System)
+
+        val appIcon by remember {
+            appPreferencesStore.getAppIconFlow()
+        }.collectAsState(initial = AppIcon.DEFAULT)
 
         val mediaPreviewConfigState = mediaPreviewConfigStateStore.state()
 
@@ -100,6 +107,9 @@ class AdvancedSettingsPresenter(
                         ThemeOption.Light -> appPreferencesStore.setTheme(Theme.Light.name)
                     }
                 }
+                is AdvancedSettingsEvents.SetAppIcon -> sessionCoroutineScope.launch {
+                    appIconService.changeIcon(event.appIcon)
+                }
                 is AdvancedSettingsEvents.SetHideInviteAvatars -> mediaPreviewConfigStateStore.setHideInviteAvatars(event.value)
                 is AdvancedSettingsEvents.SetTimelineMediaPreviewValue -> mediaPreviewConfigStateStore.setTimelineMediaPreviewValue(event.value)
                 is AdvancedSettingsEvents.SetCompressImages -> sessionCoroutineScope.launch {
@@ -116,6 +126,7 @@ class AdvancedSettingsPresenter(
             isSharePresenceEnabled = isSharePresenceEnabled,
             mediaOptimizationState = mediaOptimizationState,
             theme = themeOption,
+            appIcon = appIcon,
             mediaPreviewConfigState = mediaPreviewConfigState,
             eventSink = ::handleEvents,
         )
