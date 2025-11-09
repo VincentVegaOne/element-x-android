@@ -1,0 +1,42 @@
+<!--
+  ~ Copyright 2024 New Vector Ltd.
+  ~
+  ~ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial
+  ~ Please see LICENSE files in the repository root for full details.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.7"
+        android:scaleY="0.7"
+        android:translateX="16.2"
+        android:translateY="16.2">
+        <!-- Sudoku grid background -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M20,20h68v68h-68z" />
+        <!-- Grid lines - thin -->
+        <path
+            android:strokeColor="#90A4AE"
+            android:strokeWidth="1"
+            android:pathData="M20,42.67h68M20,65.33h68M42.67,20v68M65.33,20v68" />
+        <!-- Grid lines - thick (3x3 sections) -->
+        <path
+            android:strokeColor="#37474F"
+            android:strokeWidth="3"
+            android:pathData="M20,20h68M20,88h68M20,20v68M88,20v68M20,42.67h68M20,65.33h68M42.67,20v68M65.33,20v68" />
+        <!-- Sample numbers in grid -->
+        <path
+            android:fillColor="#1976D2"
+            android:pathData="M28,33h4v2h-4zM28,31h4v1h-2v1h2v1h-4v-1h2v-1h-2z" />
+        <path
+            android:fillColor="#1976D2"
+            android:pathData="M52,56h5v1h-2v1h2v1h-5v-1h2v-1h-2z" />
+        <path
+            android:fillColor="#1976D2"
+            android:pathData="M75,78h6v6h-2v-4h-1v3h-2v-3h-1v4h-2z" />
+    </group>
+</vector>

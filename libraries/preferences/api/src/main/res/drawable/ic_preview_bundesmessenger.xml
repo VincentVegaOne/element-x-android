@@ -1,0 +1,33 @@
+<!--
+  ~ Copyright 2024 New Vector Ltd.
+  ~
+  ~ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial
+  ~ Please see LICENSE files in the repository root for full details.
+  -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#DD0000" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    <!-- Icon content -->
+    <item android:gravity="center">
+        <vector
+            android:width="48dp"
+            android:height="48dp"
+            android:viewportWidth="48"
+            android:viewportHeight="48">
+            <!-- Chat bubble -->
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M24,10C16,10,10,15.5,10,22C10,26,12,29.5,15,31.8L13.5,36L17.5,34.5C19.5,35.5,21.7,36,24,36C32,36,38,30.5,38,22C38,15.5,32,10,24,10Z" />
+            <!-- Message lines -->
+            <path
+                android:fillColor="#2E3A59"
+                android:strokeWidth="1.5"
+                android:pathData="M17,20h14M17,24h12M17,28h10" />
+        </vector>
+    </item>
+</layer-list>

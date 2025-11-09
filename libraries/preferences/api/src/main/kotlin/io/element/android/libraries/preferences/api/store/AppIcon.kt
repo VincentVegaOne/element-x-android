@@ -7,6 +7,8 @@
 
 package io.element.android.libraries.preferences.api.store
 
+import androidx.annotation.DrawableRes
+
 /**
  * Represents available app icon variants that can be displayed on the home screen.
  * Each variant corresponds to an activity-alias in the AndroidManifest.
@@ -14,26 +16,22 @@ package io.element.android.libraries.preferences.api.store
 enum class AppIcon(
     val componentName: String,
     val displayName: String,
+    @DrawableRes val iconPreviewRes: Int,
 ) {
-    DEFAULT(
-        componentName = "io.element.android.x.MainActivityDefault",
-        displayName = "Default"
+    BUNDESMESSENGER(
+        componentName = "io.element.android.x.MainActivityBundesMessenger",
+        displayName = "BundesMessenger",
+        iconPreviewRes = io.element.android.libraries.preferences.api.R.drawable.ic_preview_bundesmessenger
     ),
-    BLUE(
-        componentName = "io.element.android.x.MainActivityBlue",
-        displayName = "Blue"
+    SUDOKU(
+        componentName = "io.element.android.x.MainActivitySudoku",
+        displayName = "Sudoku",
+        iconPreviewRes = io.element.android.libraries.preferences.api.R.drawable.ic_preview_sudoku
     ),
-    PURPLE(
-        componentName = "io.element.android.x.MainActivityPurple",
-        displayName = "Purple"
-    ),
-    GREEN(
-        componentName = "io.element.android.x.MainActivityGreen",
-        displayName = "Green"
-    ),
-    PINK(
-        componentName = "io.element.android.x.MainActivityPink",
-        displayName = "Pink"
+    SANTA(
+        componentName = "io.element.android.x.MainActivitySanta",
+        displayName = "Santa Claus",
+        iconPreviewRes = io.element.android.libraries.preferences.api.R.drawable.ic_preview_santa
     );
 
     companion object {
@@ -43,5 +41,8 @@ enum class AppIcon(
         fun fromComponentName(componentName: String): AppIcon? {
             return entries.find { it.componentName == componentName }
         }
+
+        /** Default app icon to use */
+        val DEFAULT = BUNDESMESSENGER
     }
 }

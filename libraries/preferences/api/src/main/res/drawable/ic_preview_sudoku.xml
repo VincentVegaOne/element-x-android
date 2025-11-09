@@ -1,0 +1,37 @@
+<!--
+  ~ Copyright 2024 New Vector Ltd.
+  ~
+  ~ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial
+  ~ Please see LICENSE files in the repository root for full details.
+  -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#2196F3" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    <!-- Icon content -->
+    <item android:gravity="center">
+        <vector
+            android:width="48dp"
+            android:height="48dp"
+            android:viewportWidth="48"
+            android:viewportHeight="48">
+            <!-- Grid background -->
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M10,10h28v28h-28z" />
+            <!-- Grid lines -->
+            <path
+                android:strokeColor="#37474F"
+                android:strokeWidth="2"
+                android:pathData="M10,10h28M10,38h28M10,10v28M38,10v28M10,19.3h28M10,28.7h28M19.3,10v28M28.7,10v28" />
+            <!-- Sample numbers -->
+            <path
+                android:fillColor="#1976D2"
+                android:pathData="M15,16h2v1h-2zM24,25h2v1h-2zM32,33h3v3h-1v-2h-1v1h-1z" />
+        </vector>
+    </item>
+</layer-list>

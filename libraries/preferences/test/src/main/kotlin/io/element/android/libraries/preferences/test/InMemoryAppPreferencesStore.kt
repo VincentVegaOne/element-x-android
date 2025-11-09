@@ -23,7 +23,7 @@ class InMemoryAppPreferencesStore(
     theme: String? = null,
     logLevel: LogLevel = LogLevel.INFO,
     traceLockPacks: Set<TraceLogPack> = emptySet(),
-    appIcon: AppIcon = AppIcon.DEFAULT,
+    appIcon: AppIcon = AppIcon.BUNDESMESSENGER,
 ) : AppPreferencesStore {
     private val isDeveloperModeEnabled = MutableStateFlow(isDeveloperModeEnabled)
     private val customElementCallBaseUrl = MutableStateFlow(customElementCallBaseUrl)
