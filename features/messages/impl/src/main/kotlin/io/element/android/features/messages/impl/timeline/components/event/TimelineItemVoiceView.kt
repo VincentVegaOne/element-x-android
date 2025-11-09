@@ -8,10 +8,13 @@
 package io.element.android.features.messages.impl.timeline.components.event
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -99,8 +103,10 @@ fun TimelineItemVoiceView(
         }
     )
 
-    Column(
+    // Modern card-style container inspired by WhatsApp & Telegram
+    Surface(
         modifier = modifier
+            .fillMaxWidth()
             .clearAndSetSemantics {
                 contentDescription = a11y
                 if (state.button == VoiceMessageState.Button.Disabled) {
@@ -120,122 +126,148 @@ fun TimelineItemVoiceView(
                     )
                 )
             },
+        shape = RoundedCornerShape(16.dp),
+        color = ElementTheme.colors.bgSubtleSecondary,
+        tonalElevation = 1.dp,
     ) {
-        // Main playback controls row
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
-            if (!isTalkbackActive()) {
-                when (state.button) {
-                    VoiceMessageState.Button.Play -> PlayButton(onClick = ::playPause)
-                    VoiceMessageState.Button.Pause -> PauseButton(onClick = ::playPause)
-                    VoiceMessageState.Button.Downloading -> ProgressButton()
-                    VoiceMessageState.Button.Retry -> RetryButton(onClick = ::playPause)
-                    VoiceMessageState.Button.Disabled -> PlayButton(onClick = {}, enabled = false)
-                }
-            }
-            Spacer(Modifier.width(8.dp))
-
-            // Skip backward button
-            if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
-                IconButton(
-                    onClick = { skipBackward() },
-                    modifier = Modifier.size(24.dp),
-                ) {
-                    Icon(
-                        imageVector = CompoundIcons.ArrowLeft(),
-                        contentDescription = "Skip backward 15s",
-                        tint = ElementTheme.colors.iconSecondary,
-                        modifier = Modifier.size(16.dp),
-                    )
-                }
-                Spacer(Modifier.width(4.dp))
-            }
-
-            Text(
-                text = state.time,
-                color = ElementTheme.colors.textSecondary,
-                style = ElementTheme.typography.fontBodySmMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Spacer(Modifier.width(8.dp))
-
-            // Enhanced waveform with vibrant gradient colors
-            // Unplayed portion: Subtle gray gradient
-            val waveformBrush = Brush.horizontalGradient(
-                colors = listOf(
-                    Color(0xFFCCCCCC), // Light gray
-                    Color(0xFFAAAAAA), // Medium gray
-                )
-            )
-
-            // Played portion: Vibrant blue-to-purple gradient (inspired by modern audio apps)
-            val progressBrush = Brush.horizontalGradient(
-                colors = listOf(
-                    Color(0xFF0D6EFD), // Vibrant blue
-                    Color(0xFF6610F2), // Purple
-                    Color(0xFF0D6EFD), // Back to blue for shimmer effect
-                )
-            )
-
-            // Cursor: Bright accent color that stands out
-            val cursorBrush = SolidColor(Color(0xFFFFFFFF)) // White cursor for maximum contrast
-
-            WaveformPlaybackView(
-                showCursor = state.showCursor,
-                playbackProgress = state.progress,
-                waveform = content.waveform,
-                modifier = Modifier
-                    .height(42.dp) // Increased height for better visibility
-                    .weight(1f),
-                seekEnabled = !isTalkbackActive(),
-                onSeek = { state.eventSink(VoiceMessageEvents.Seek(it)) },
-                brush = waveformBrush,
-                progressBrush = progressBrush,
-                cursorBrush = cursorBrush,
-                lineWidth = 3.dp, // Thicker lines for better visibility
-                linePadding = 3.dp, // More spacing between bars
-            )
-            Spacer(Modifier.width(8.dp))
-
-            // Skip forward button
-            if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
-                IconButton(
-                    onClick = { skipForward() },
-                    modifier = Modifier.size(24.dp),
-                ) {
-                    Icon(
-                        imageVector = CompoundIcons.ArrowRight(),
-                        contentDescription = "Skip forward 15s",
-                        tint = ElementTheme.colors.iconSecondary,
-                        modifier = Modifier.size(16.dp),
-                    )
-                }
-            }
-        }
-
-        // Playback speed control row
-        if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
-            Spacer(Modifier.height(4.dp))
+            // Main playback controls row
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Spacer(Modifier.width(44.dp)) // Align with waveform
-                Text(
-                    text = state.playbackSpeed.toSpeedLabel(),
-                    style = ElementTheme.typography.fontBodyXsRegular,
-                    color = ElementTheme.colors.textSecondary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .clickable(onClick = ::cyclePlaybackSpeed)
-                        .background(
-                            color = ElementTheme.colors.bgSubtleSecondary,
-                            shape = RoundedCornerShape(12.dp)
+                if (!isTalkbackActive()) {
+                    when (state.button) {
+                        VoiceMessageState.Button.Play -> PlayButton(onClick = ::playPause)
+                        VoiceMessageState.Button.Pause -> PauseButton(onClick = ::playPause)
+                        VoiceMessageState.Button.Downloading -> ProgressButton()
+                        VoiceMessageState.Button.Retry -> RetryButton(onClick = ::playPause)
+                        VoiceMessageState.Button.Disabled -> PlayButton(onClick = {}, enabled = false)
+                    }
+                }
+                Spacer(Modifier.width(12.dp))
+
+                // Skip backward button - larger touch target
+                if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
+                    IconButton(
+                        onClick = { skipBackward() },
+                        modifier = Modifier.size(40.dp),
+                    ) {
+                        Icon(
+                            imageVector = CompoundIcons.ArrowLeft(),
+                            contentDescription = "Skip backward 15s",
+                            tint = ElementTheme.colors.iconSecondary,
+                            modifier = Modifier.size(20.dp),
                         )
-                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    }
+                    Spacer(Modifier.width(8.dp))
+                }
+
+                // Larger, bolder time display
+                Text(
+                    text = state.time,
+                    color = ElementTheme.colors.textPrimary,
+                    style = ElementTheme.typography.fontBodyMdMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
+                Spacer(Modifier.width(12.dp))
+
+                // Enhanced waveform with vibrant gradient colors
+                // Unplayed portion: Subtle gray gradient
+                val waveformBrush = Brush.horizontalGradient(
+                    colors = listOf(
+                        Color(0xFFCCCCCC), // Light gray
+                        Color(0xFFAAAAAA), // Medium gray
+                    )
+                )
+
+                // Played portion: Vibrant blue-to-purple gradient (inspired by modern audio apps)
+                val progressBrush = Brush.horizontalGradient(
+                    colors = listOf(
+                        Color(0xFF0D6EFD), // Vibrant blue
+                        Color(0xFF6610F2), // Purple
+                        Color(0xFF0D6EFD), // Back to blue for shimmer effect
+                    )
+                )
+
+                // Cursor: Bright accent color that stands out
+                val cursorBrush = SolidColor(Color(0xFFFFFFFF)) // White cursor for maximum contrast
+
+                WaveformPlaybackView(
+                    showCursor = state.showCursor,
+                    playbackProgress = state.progress,
+                    waveform = content.waveform,
+                    modifier = Modifier
+                        .height(56.dp) // Larger waveform for better touch interaction
+                        .weight(1f),
+                    seekEnabled = !isTalkbackActive(),
+                    onSeek = { state.eventSink(VoiceMessageEvents.Seek(it)) },
+                    brush = waveformBrush,
+                    progressBrush = progressBrush,
+                    cursorBrush = cursorBrush,
+                    lineWidth = 3.5.dp, // Thicker lines for better visibility
+                    linePadding = 3.dp, // More spacing between bars
+                )
+                Spacer(Modifier.width(12.dp))
+
+                // Skip forward button - larger touch target
+                if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
+                    IconButton(
+                        onClick = { skipForward() },
+                        modifier = Modifier.size(40.dp),
+                    ) {
+                        Icon(
+                            imageVector = CompoundIcons.ArrowRight(),
+                            contentDescription = "Skip forward 15s",
+                            tint = ElementTheme.colors.iconSecondary,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                }
+            }
+
+            // Playback speed control row - more prominent design
+            if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
+                Spacer(Modifier.height(12.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    // Left-aligned speed control button (inspired by Telegram)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable(onClick = ::cyclePlaybackSpeed)
+                            .background(
+                                color = ElementTheme.colors.bgActionPrimaryRest.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = ElementTheme.colors.borderInteractivePrimary.copy(alpha = 0.3f),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                    ) {
+                        Icon(
+                            imageVector = CompoundIcons.PlaySolid(),
+                            contentDescription = null,
+                            tint = ElementTheme.colors.iconAccentTertiary,
+                            modifier = Modifier.size(14.dp),
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = state.playbackSpeed.toSpeedLabel(),
+                            style = ElementTheme.typography.fontBodySmMedium,
+                            color = ElementTheme.colors.textPrimary,
+                        )
+                    }
+                }
             }
         }
     }
@@ -344,7 +376,7 @@ private fun CustomIconButton(
         onClick = onClick,
         modifier = Modifier
             .background(color = ElementTheme.colors.bgCanvasDefault, shape = CircleShape)
-            .size(36.dp),
+            .size(52.dp), // Larger button for better touch accessibility
         enabled = enabled,
         colors = IconButtonDefaults.iconButtonColors(
             contentColor = ElementTheme.colors.iconSecondary,
