@@ -64,7 +64,7 @@ internal fun MessagesViewTopBar(
     activeMembersCount: Long,
     dmUserIdentityState: IdentityState?,
     onRoomDetailsClick: () -> Unit,
-    onJoinCallClick: () -> Unit,
+    onJoinCallClick: (videoEnabled: Boolean) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

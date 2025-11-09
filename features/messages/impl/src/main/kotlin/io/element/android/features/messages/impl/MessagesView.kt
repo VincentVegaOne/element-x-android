@@ -111,7 +111,7 @@ fun MessagesView(
     onLinkClick: (String, Boolean) -> Unit,
     onSendLocationClick: () -> Unit,
     onCreatePollClick: () -> Unit,
-    onJoinCallClick: () -> Unit,
+    onJoinCallClick: (videoEnabled: Boolean) -> Unit,
     onViewAllPinnedMessagesClick: () -> Unit,
     modifier: Modifier = Modifier,
     forceJumpToBottomVisibility: Boolean = false,

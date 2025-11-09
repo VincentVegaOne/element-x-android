@@ -122,7 +122,7 @@ class MessagesNode(
         fun navigateToSendLocation()
         fun navigateToCreatePoll()
         fun navigateToEditPoll(eventId: EventId)
-        fun navigateToRoomCall(roomId: RoomId)
+        fun navigateToRoomCall(roomId: RoomId, videoEnabled: Boolean = true)
         fun navigateToThread(threadRootId: ThreadId, focusedEventId: EventId?)
         fun navigateToRoomDetails()
         fun navigateToPinnedMessagesList()
@@ -273,7 +273,7 @@ class MessagesNode(
                 },
                 onSendLocationClick = callback::navigateToSendLocation,
                 onCreatePollClick = callback::navigateToCreatePoll,
-                onJoinCallClick = { callback.navigateToRoomCall(room.roomId) },
+                onJoinCallClick = { videoEnabled -> callback.navigateToRoomCall(room.roomId, videoEnabled) },
                 onViewAllPinnedMessagesClick = callback::navigateToPinnedMessagesList,
                 modifier = modifier,
                 knockRequestsBannerView = {

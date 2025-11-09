@@ -9,6 +9,7 @@ package io.element.android.features.messages.impl.timeline.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
@@ -36,7 +37,7 @@ import io.element.android.libraries.ui.strings.CommonStrings
 internal fun CallMenuItem(
     roomCallState: RoomCallState,
     activeMembersCount: Long,
-    onJoinCallClick: () -> Unit,
+    onJoinCallClick: (videoEnabled: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (roomCallState) {
@@ -66,18 +67,46 @@ internal fun CallMenuItem(
 private fun StandByCallMenuItem(
     roomCallState: RoomCallState.StandBy,
     activeMembersCount: Long,
-    onJoinCallClick: () -> Unit,
+    onJoinCallClick: (videoEnabled: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    IconButton(
-        modifier = modifier,
-        onClick = onJoinCallClick,
-        enabled = roomCallState.canStartCall,
-    ) {
-        Icon(
-            imageVector = getCallIcon(activeMembersCount),
-            contentDescription = stringResource(CommonStrings.a11y_start_call),
-        )
+    // For 1-on-1 chats, show separate voice and video buttons
+    if (activeMembersCount == 2L) {
+        Row(modifier = modifier) {
+            // Audio call button (phone icon)
+            IconButton(
+                onClick = { onJoinCallClick(false) },
+                enabled = roomCallState.canStartCall,
+            ) {
+                Icon(
+                    imageVector = CompoundIcons.VoiceCallSolid(),
+                    contentDescription = stringResource(CommonStrings.a11y_start_call),
+                )
+            }
+            Spacer(Modifier.width(4.dp))
+            // Video call button (camera icon)
+            IconButton(
+                onClick = { onJoinCallClick(true) },
+                enabled = roomCallState.canStartCall,
+            ) {
+                Icon(
+                    imageVector = CompoundIcons.VideoCallSolid(),
+                    contentDescription = stringResource(CommonStrings.a11y_start_call),
+                )
+            }
+        }
+    } else {
+        // For group chats, show single headphones button
+        IconButton(
+            modifier = modifier,
+            onClick = { onJoinCallClick(true) },
+            enabled = roomCallState.canStartCall,
+        ) {
+            Icon(
+                imageVector = getCallIcon(activeMembersCount),
+                contentDescription = stringResource(CommonStrings.a11y_start_call),
+            )
+        }
     }
 }
 
@@ -85,12 +114,12 @@ private fun StandByCallMenuItem(
 private fun OnGoingCallMenuItem(
     roomCallState: RoomCallState.OnGoing,
     activeMembersCount: Long,
-    onJoinCallClick: () -> Unit,
+    onJoinCallClick: (videoEnabled: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (!roomCallState.isUserLocallyInTheCall) {
         Button(
-            onClick = onJoinCallClick,
+            onClick = { onJoinCallClick(true) },
             colors = ButtonDefaults.buttonColors(
                 contentColor = ElementTheme.colors.bgCanvasDefault,
                 containerColor = ElementTheme.colors.iconAccentTertiary
