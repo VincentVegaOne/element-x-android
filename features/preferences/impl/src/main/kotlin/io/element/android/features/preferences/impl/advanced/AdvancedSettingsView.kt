@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import im.vector.app.features.analytics.plan.Interaction
 import io.element.android.compound.theme.ElementTheme
+import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.preferences.impl.R
 import io.element.android.libraries.architecture.coverage.ExcludeFromCoverage
 import io.element.android.libraries.designsystem.components.dialogs.ListDialog
@@ -33,6 +34,7 @@ import io.element.android.libraries.designsystem.preview.ElementPreviewDark
 import io.element.android.libraries.designsystem.preview.ElementPreviewLight
 import io.element.android.libraries.designsystem.preview.PreviewWithLargeHeight
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
+import io.element.android.libraries.designsystem.theme.components.IconSource
 import io.element.android.libraries.designsystem.theme.components.ListItem
 import io.element.android.libraries.designsystem.theme.components.ListSectionHeader
 import io.element.android.libraries.designsystem.theme.components.ListSupportingText
@@ -256,9 +258,7 @@ private fun AppIconSelectorDialog(
                     },
                     trailingContent = if (isSelected) {
                         ListItemContent.Icon(
-                            iconSource = androidx.compose.ui.graphics.vector.ImageVector.vectorResource(
-                                id = io.element.android.libraries.designsystem.R.drawable.ic_check
-                            ),
+                            iconSource = IconSource.Vector(CompoundIcons.Check())
                         )
                     } else {
                         null
