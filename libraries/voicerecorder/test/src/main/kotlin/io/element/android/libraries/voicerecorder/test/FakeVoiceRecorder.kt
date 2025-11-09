@@ -51,6 +51,30 @@ class FakeVoiceRecorder(
         }
     }
 
+    override suspend fun pauseRecord() {
+        val currentState = _state.value
+        if (currentState is VoiceRecorderState.Recording) {
+            _state.emit(
+                VoiceRecorderState.Paused(
+                    elapsedTime = currentState.elapsedTime,
+                    levels = currentState.levels
+                )
+            )
+        }
+    }
+
+    override suspend fun resumeRecord() {
+        val currentState = _state.value
+        if (currentState is VoiceRecorderState.Paused) {
+            _state.emit(
+                VoiceRecorderState.Recording(
+                    elapsedTime = currentState.elapsedTime,
+                    levels = currentState.levels
+                )
+            )
+        }
+    }
+
     override suspend fun stopRecord(
         cancelled: Boolean
     ) {

@@ -114,6 +114,53 @@ class DefaultVoiceRecorder(
     }
 
     /**
+     * Pause the current recording.
+     *
+     * Note: Full implementation pending. Currently just stops the recording.
+     * Future implementation will support resuming from the paused state.
+     */
+    override suspend fun pauseRecord() {
+        Timber.i("Voice recorder pause requested (not yet fully implemented)")
+        // TODO: Implement full pause functionality
+        // For now, we just transition to a paused state to maintain API compatibility
+        lock.withLock {
+            val currentState = _state.value
+            if (currentState is VoiceRecorderState.Recording) {
+                _state.emit(
+                    VoiceRecorderState.Paused(
+                        elapsedTime = currentState.elapsedTime,
+                        levels = currentState.levels
+                    )
+                )
+            }
+        }
+    }
+
+    /**
+     * Resume a paused recording.
+     *
+     * Note: Full implementation pending. Currently acts as a no-op.
+     * Future implementation will continue recording from the paused state.
+     */
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
+    override suspend fun resumeRecord() {
+        Timber.i("Voice recorder resume requested (not yet fully implemented)")
+        // TODO: Implement full resume functionality
+        // For now, we just transition back to recording state to maintain API compatibility
+        lock.withLock {
+            val currentState = _state.value
+            if (currentState is VoiceRecorderState.Paused) {
+                _state.emit(
+                    VoiceRecorderState.Recording(
+                        elapsedTime = currentState.elapsedTime,
+                        levels = currentState.levels
+                    )
+                )
+            }
+        }
+    }
+
+    /**
      * Stop the current recording.
      *
      * Call [deleteRecording] to delete any recorded audio.
