@@ -133,7 +133,7 @@ fun TimelineItemVoiceView(
         Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
-            // Main playback controls row
+            // Row 1: Play/Pause button and full-width waveform
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
@@ -149,33 +149,7 @@ fun TimelineItemVoiceView(
                 }
                 Spacer(Modifier.width(12.dp))
 
-                // Skip backward button - larger touch target
-                if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
-                    IconButton(
-                        onClick = { skipBackward() },
-                        modifier = Modifier.size(40.dp),
-                    ) {
-                        Icon(
-                            imageVector = CompoundIcons.ArrowLeft(),
-                            contentDescription = "Skip backward 15s",
-                            tint = ElementTheme.colors.iconSecondary,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    }
-                    Spacer(Modifier.width(8.dp))
-                }
-
-                // Larger, bolder time display
-                Text(
-                    text = state.time,
-                    color = ElementTheme.colors.textPrimary,
-                    style = ElementTheme.typography.fontBodyMdMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Spacer(Modifier.width(12.dp))
-
-                // Enhanced waveform with vibrant gradient colors
+                // Enhanced waveform with vibrant gradient colors - FULL WIDTH
                 // Unplayed portion: Subtle gray gradient
                 val waveformBrush = Brush.horizontalGradient(
                     colors = listOf(
@@ -202,7 +176,7 @@ fun TimelineItemVoiceView(
                     waveform = content.waveform,
                     modifier = Modifier
                         .height(56.dp) // Larger waveform for better touch interaction
-                        .weight(1f),
+                        .weight(1f), // Takes all remaining width!
                     seekEnabled = !isTalkbackActive(),
                     onSeek = { state.eventSink(VoiceMessageEvents.Seek(it)) },
                     brush = waveformBrush,
@@ -211,25 +185,9 @@ fun TimelineItemVoiceView(
                     lineWidth = 3.5.dp, // Thicker lines for better visibility
                     linePadding = 3.dp, // More spacing between bars
                 )
-                Spacer(Modifier.width(12.dp))
-
-                // Skip forward button - larger touch target
-                if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
-                    IconButton(
-                        onClick = { skipForward() },
-                        modifier = Modifier.size(40.dp),
-                    ) {
-                        Icon(
-                            imageVector = CompoundIcons.ArrowRight(),
-                            contentDescription = "Skip forward 15s",
-                            tint = ElementTheme.colors.iconSecondary,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    }
-                }
             }
 
-            // Playback speed control row - more prominent design
+            // Row 2: Time (left) | Skip controls (center) | Speed (right) - Spotify-inspired layout
             if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
                 Spacer(Modifier.height(12.dp))
                 Row(
@@ -237,7 +195,46 @@ fun TimelineItemVoiceView(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    // Left-aligned speed control button (inspired by Telegram)
+                    // Left: Time display
+                    Text(
+                        text = state.time,
+                        color = ElementTheme.colors.textPrimary,
+                        style = ElementTheme.typography.fontBodyMdMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+
+                    // Center: Skip controls grouped together
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        IconButton(
+                            onClick = { skipBackward() },
+                            modifier = Modifier.size(40.dp),
+                        ) {
+                            Icon(
+                                imageVector = CompoundIcons.ArrowLeft(),
+                                contentDescription = "Skip backward 15s",
+                                tint = ElementTheme.colors.iconSecondary,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
+
+                        IconButton(
+                            onClick = { skipForward() },
+                            modifier = Modifier.size(40.dp),
+                        ) {
+                            Icon(
+                                imageVector = CompoundIcons.ArrowRight(),
+                                contentDescription = "Skip forward 15s",
+                                tint = ElementTheme.colors.iconSecondary,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
+                    }
+
+                    // Right: Speed control button
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
