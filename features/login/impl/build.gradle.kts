@@ -40,6 +40,7 @@ dependencies {
     implementation(projects.libraries.testtags)
     implementation(projects.libraries.uiStrings)
     implementation(projects.libraries.permissions.api)
+    implementation(projects.libraries.preferences.api)
     implementation(projects.libraries.sessionStorage.api)
     implementation(projects.libraries.qrcode)
     implementation(projects.libraries.oidc.api)
