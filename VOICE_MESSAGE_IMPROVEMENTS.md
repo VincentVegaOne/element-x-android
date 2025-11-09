@@ -51,19 +51,46 @@ This document outlines the comprehensive improvements made to the voice message 
 - Tapping right arrow skips forward 15 seconds (maximum: duration)
 - Inspired by Telegram's intuitive skip controls
 
-### 3. Enhanced UI/UX
+### 3. Enhanced UI/UX - Modern Touch-Friendly Design
 **Status**: ✅ Fully Implemented
 
-**What was improved:**
-- Redesigned timeline voice message layout with better spacing
-- Playback speed selector with rounded pill design
-- Skip buttons integrated seamlessly with existing controls
-- Clean visual hierarchy: Play/Pause → Skip Back → Time → Waveform → Skip Forward
-- Speed control positioned below waveform for easy access
+**Major redesign inspired by WhatsApp, Telegram, Spotify, and Material Design 3:**
+
+**Two-Row Layout Architecture:**
+- **Row 1**: Play/Pause button (52dp) + Full-width waveform
+  - Waveform uses 100% of available horizontal space (~40% more than before)
+  - Shows significantly more waveform detail for precise navigation
+  - 56dp height for easy touch interaction
+
+- **Row 2**: Time (left) | Skip controls (center) | Speed (right)
+  - Time display prominently positioned and always visible
+  - Skip backward/forward buttons grouped together (40dp each)
+  - Speed control button distinctly positioned on right
+  - Balanced spacing with clear visual hierarchy
+
+**Touch Accessibility Improvements:**
+- Play/Pause button: 36dp → **52dp** (44% larger, exceeds Android 48dp standard)
+- Skip buttons: 24dp → **40dp** (67% larger for reliable touch)
+- Waveform height: 42dp → **56dp** (33% taller)
+- Overall padding: Increased from 8dp to **12-16dp** throughout
+- Card-style background with 16dp rounded corners and tonal elevation
+
+**Visual Enhancements:**
 - **Vibrant waveform colors**: Custom gradient colors for better visual appeal
-  - Unplayed portion: Subtle gradient maintaining theme consistency
-  - Played portion: Vibrant teal-to-green gradient (#0DBD8B → #0E9F6E)
-  - Cursor/playhead: Solid vibrant teal (#0DBD8B)
+  - Unplayed portion: Light to medium gray gradient
+  - Played portion: Vibrant blue-to-purple gradient (#0D6EFD → #6610F2)
+  - Cursor/playhead: Solid white for maximum contrast
+  - Thicker bars (3.5dp) with better spacing (3dp)
+- Surface container provides clear visual separation in timeline
+- Better spacing reduces accidental taps
+- Larger icons in skip buttons (20dp) and time display (fontBodyMdMedium)
+- Speed selector redesigned as prominent button with play icon and accent border
+
+**Navigation Improvements:**
+- Voice messages are now substantially larger and easier to navigate in timeline
+- Waveform maximized for better scrubbing and visual feedback
+- All interactive elements exceed minimum touch target requirements
+- Follows modern mobile design best practices
 
 ## 🚧 Partially Implemented
 
