@@ -77,6 +77,7 @@ data class TimelineRoomInfo(
     val userHasPermissionToSendMessage: Boolean,
     val userHasPermissionToSendReaction: Boolean,
     val roomCallState: RoomCallState,
+    val activeMembersCount: Long,
     val pinnedEventIds: ImmutableList<EventId>,
     val typingNotificationState: TypingNotificationState,
     val predecessorRoom: PredecessorRoom?,

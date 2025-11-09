@@ -44,6 +44,7 @@ import io.element.android.libraries.ui.strings.CommonStrings
 internal fun TimelineItemCallNotifyView(
     event: TimelineItem.Event,
     roomCallState: RoomCallState,
+    activeMembersCount: Long,
     onLongClick: (TimelineItem.Event) -> Unit,
     onJoinCallClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -96,6 +97,7 @@ internal fun TimelineItemCallNotifyView(
         if (roomCallState is RoomCallState.OnGoing) {
             CallMenuItem(
                 roomCallState = roomCallState,
+                activeMembersCount = activeMembersCount,
                 onJoinCallClick = onJoinCallClick,
             )
         } else {
@@ -121,6 +123,7 @@ internal fun TimelineItemCallNotifyViewPreview() = ElementPreview {
                 TimelineItemCallNotifyView(
                     event = aTimelineItemEvent(content = TimelineItemRtcNotificationContent()),
                     roomCallState = roomCallState,
+                    activeMembersCount = 2,
                     onLongClick = {},
                     onJoinCallClick = {},
                 )

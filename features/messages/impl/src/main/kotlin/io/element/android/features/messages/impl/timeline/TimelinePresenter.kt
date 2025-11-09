@@ -267,6 +267,7 @@ class TimelinePresenter(
                     userHasPermissionToSendMessage = userHasPermissionToSendMessage,
                     userHasPermissionToSendReaction = userHasPermissionToSendReaction,
                     roomCallState = roomCallState,
+                    activeMembersCount = roomInfo.activeMembersCount,
                     pinnedEventIds = roomInfo.pinnedEventIds,
                     typingNotificationState = typingNotificationState,
                     predecessorRoom = room.predecessorRoom(),

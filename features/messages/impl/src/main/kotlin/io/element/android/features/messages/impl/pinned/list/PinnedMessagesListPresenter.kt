@@ -104,6 +104,7 @@ class PinnedMessagesListPresenter(
                 userHasPermissionToSendReaction = false,
                 // We do not care about the call state here.
                 roomCallState = aStandByCallState(),
+                activeMembersCount = room.info().activeMembersCount,
                 // don't compute this value or the pin icon will be shown
                 pinnedEventIds = persistentListOf(),
                 typingNotificationState = TypingNotificationState(

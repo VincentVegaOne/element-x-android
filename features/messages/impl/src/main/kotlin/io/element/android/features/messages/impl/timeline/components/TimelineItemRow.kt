@@ -127,6 +127,7 @@ internal fun TimelineItemRow(
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
                             event = timelineItem,
                             roomCallState = timelineRoomInfo.roomCallState,
+                            activeMembersCount = timelineRoomInfo.activeMembersCount,
                             onLongClick = onLongClick,
                             onJoinCallClick = onJoinCallClick,
                         )
