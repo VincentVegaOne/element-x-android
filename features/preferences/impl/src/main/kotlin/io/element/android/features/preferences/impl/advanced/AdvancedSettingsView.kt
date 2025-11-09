@@ -15,9 +15,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import im.vector.app.features.analytics.plan.Interaction
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
@@ -250,9 +252,14 @@ private fun AppIconSelectorDialog(
                         )
                     },
                     leadingContent = ListItemContent.Custom {
-                        androidx.compose.foundation.Image(
-                            painter = androidx.compose.ui.res.painterResource(id = icon.iconPreviewRes),
-                            contentDescription = icon.displayName,
+                        val context = LocalContext.current
+                        AndroidView(
+                            factory = { ctx ->
+                                android.widget.ImageView(ctx).apply {
+                                    setImageResource(icon.iconPreviewRes)
+                                    scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+                                }
+                            },
                             modifier = androidx.compose.ui.Modifier.size(48.dp),
                         )
                     },
