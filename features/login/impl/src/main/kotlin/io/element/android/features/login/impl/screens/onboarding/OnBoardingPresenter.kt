@@ -20,6 +20,8 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.element.android.appconfig.OnBoardingConfig
+import io.element.android.compound.theme.Theme
+import io.element.android.compound.theme.mapToTheme
 import io.element.android.features.enterprise.api.EnterpriseService
 import io.element.android.features.enterprise.api.canConnectToAnyHomeserver
 import io.element.android.features.login.impl.accesscontrol.DefaultAccountProviderAccessControl
@@ -28,6 +30,7 @@ import io.element.android.features.login.impl.login.LoginHelper
 import io.element.android.features.rageshake.api.RageshakeFeatureAvailability
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.core.meta.BuildMeta
+import io.element.android.libraries.preferences.api.store.AppPreferencesStore
 import io.element.android.libraries.sessionstorage.api.SessionStore
 import io.element.android.libraries.ui.utils.MultipleTapToUnlock
 import kotlinx.coroutines.launch
@@ -43,6 +46,7 @@ class OnBoardingPresenter(
     private val onBoardingLogoResIdProvider: OnBoardingLogoResIdProvider,
     private val sessionStore: SessionStore,
     private val accountProviderDataSource: AccountProviderDataSource,
+    private val appPreferencesStore: AppPreferencesStore,
 ) : Presenter<OnBoardingState> {
     @AssistedFactory
     interface Factory {
@@ -97,6 +101,7 @@ class OnBoardingPresenter(
         }
 
         val loginMode by loginHelper.collectLoginMode()
+        val theme by appPreferencesStore.getThemeFlow().mapToTheme().collectAsState(initial = Theme.System)
 
         fun handleEvent(event: OnBoardingEvents) {
             when (event) {
@@ -117,6 +122,14 @@ class OnBoardingPresenter(
                         }
                     }
                 }
+                OnBoardingEvents.OnThemeToggle -> localCoroutineScope.launch {
+                    // Toggle between Light and Dark themes
+                    val newTheme = when (theme) {
+                        Theme.Light -> Theme.Dark
+                        Theme.Dark, Theme.System -> Theme.Light
+                    }
+                    appPreferencesStore.setTheme(newTheme.name)
+                }
             }
         }
 
@@ -131,6 +144,7 @@ class OnBoardingPresenter(
             loginMode = loginMode,
             version = buildMeta.versionName,
             onBoardingLogoResId = onBoardingLogoResId,
+            theme = theme,
             eventSink = ::handleEvent,
         )
     }

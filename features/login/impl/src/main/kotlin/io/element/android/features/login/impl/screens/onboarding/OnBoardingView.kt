@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -31,6 +32,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.element.android.compound.theme.ElementTheme
+import io.element.android.compound.theme.Theme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.login.impl.R
 import io.element.android.features.login.impl.login.LoginModeView
@@ -44,6 +46,8 @@ import io.element.android.libraries.designsystem.components.BigIcon
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Button
+import io.element.android.libraries.designsystem.theme.components.Icon
+import io.element.android.libraries.designsystem.theme.components.IconButton
 import io.element.android.libraries.designsystem.theme.components.IconSource
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.theme.components.TextButton
@@ -120,6 +124,12 @@ private fun AddFirstAccountScaffold(
     OnBoardingPage(
         modifier = modifier,
         renderBackground = state.onBoardingLogoResId == null,
+        topEnd = {
+            ThemeToggleButton(
+                theme = state.theme,
+                onToggle = { state.eventSink(OnBoardingEvents.OnThemeToggle) }
+            )
+        },
         content = {
             if (state.onBoardingLogoResId != null) {
                 OnBoardingLogo(
@@ -301,6 +311,30 @@ private fun OnBoardingButtons(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ThemeToggleButton(
+    theme: Theme,
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val icon = when (theme) {
+        Theme.Light -> CompoundIcons.DarkMode()
+        Theme.Dark, Theme.System -> CompoundIcons.LightMode()
+    }
+
+    IconButton(
+        onClick = onToggle,
+        modifier = modifier.size(48.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = "Toggle theme",
+            tint = ElementTheme.colors.iconPrimary,
+            modifier = Modifier.size(24.dp)
+        )
     }
 }
 

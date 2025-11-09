@@ -8,6 +8,7 @@
 package io.element.android.features.login.impl.screens.onboarding
 
 import androidx.annotation.DrawableRes
+import io.element.android.compound.theme.Theme
 import io.element.android.features.login.impl.login.LoginMode
 import io.element.android.libraries.architecture.AsyncData
 
@@ -23,6 +24,7 @@ data class OnBoardingState(
     @DrawableRes
     val onBoardingLogoResId: Int?,
     val loginMode: AsyncData<LoginMode>,
+    val theme: Theme,
     val eventSink: (OnBoardingEvents) -> Unit,
 ) {
     val submitEnabled: Boolean

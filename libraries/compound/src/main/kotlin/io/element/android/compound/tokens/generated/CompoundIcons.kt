@@ -136,6 +136,9 @@ object CompoundIcons {
     @Composable fun DarkMode(): ImageVector {
         return ImageVector.vectorResource(R.drawable.ic_compound_dark_mode)
     }
+    @Composable fun LightMode(): ImageVector {
+        return ImageVector.vectorResource(R.drawable.ic_compound_light_mode)
+    }
     @Composable fun Delete(): ImageVector {
         return ImageVector.vectorResource(R.drawable.ic_compound_delete)
     }
@@ -664,6 +667,7 @@ object CompoundIcons {
         Computer(),
         Copy(),
         DarkMode(),
+        LightMode(),
         Delete(),
         Devices(),
         DialPad(),
@@ -867,6 +871,7 @@ object CompoundIcons {
         R.drawable.ic_compound_computer,
         R.drawable.ic_compound_copy,
         R.drawable.ic_compound_dark_mode,
+        R.drawable.ic_compound_light_mode,
         R.drawable.ic_compound_delete,
         R.drawable.ic_compound_devices,
         R.drawable.ic_compound_dial_pad,

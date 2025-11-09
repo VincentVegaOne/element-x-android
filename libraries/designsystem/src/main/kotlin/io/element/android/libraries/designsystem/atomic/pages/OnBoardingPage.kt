@@ -33,6 +33,7 @@ import io.element.android.libraries.designsystem.theme.components.Text
  * @param modifier Classical modifier.
  * @param renderBackground whether to render the background image or not.
  * @param contentAlignment horizontal alignment of the contents.
+ * @param topEnd optional content for top-end corner (e.g., theme toggle).
  * @param footer optional footer.
  * @param content main content.
  */
@@ -41,6 +42,7 @@ fun OnBoardingPage(
     modifier: Modifier = Modifier,
     renderBackground: Boolean = true,
     contentAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    topEnd: @Composable () -> Unit = {},
     footer: @Composable () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
@@ -77,6 +79,16 @@ fun OnBoardingPage(
             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                 footer()
             }
+        }
+        // Top-end content (e.g., theme toggle)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .systemBarsPadding()
+                .padding(all = 20.dp),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            topEnd()
         }
     }
 }

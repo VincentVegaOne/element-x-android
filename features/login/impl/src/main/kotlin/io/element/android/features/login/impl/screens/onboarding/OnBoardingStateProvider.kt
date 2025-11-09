@@ -9,6 +9,7 @@ package io.element.android.features.login.impl.screens.onboarding
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import io.element.android.compound.theme.Theme
 import io.element.android.features.login.impl.login.LoginMode
 import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.designsystem.R
@@ -43,6 +44,7 @@ fun anOnBoardingState(
     @DrawableRes
     customLogoResId: Int? = null,
     loginMode: AsyncData<LoginMode> = AsyncData.Uninitialized,
+    theme: Theme = Theme.System,
     eventSink: (OnBoardingEvents) -> Unit = {},
 ) = OnBoardingState(
     isAddingAccount = isAddingAccount,
@@ -55,5 +57,6 @@ fun anOnBoardingState(
     version = version,
     loginMode = loginMode,
     onBoardingLogoResId = customLogoResId,
+    theme = theme,
     eventSink = eventSink,
 )
