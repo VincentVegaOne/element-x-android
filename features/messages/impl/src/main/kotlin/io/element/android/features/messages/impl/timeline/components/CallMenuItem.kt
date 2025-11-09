@@ -106,8 +106,17 @@ private fun OnGoingCallMenuItem(
             Spacer(Modifier.width(8.dp))
         }
     } else {
-        // Else user is already in the call, hide the button.
-        Box(modifier)
+        // User is in the call - show active state with green icon (like Slack's huddle)
+        IconButton(
+            modifier = modifier,
+            onClick = { /* User is already in call, could navigate to call screen */ },
+        ) {
+            Icon(
+                imageVector = CompoundIcons.VideoCallSolid(),
+                contentDescription = stringResource(CommonStrings.a11y_start_call),
+                tint = ElementTheme.colors.iconSuccessPrimary, // Green color for active state
+            )
+        }
     }
 }
 
