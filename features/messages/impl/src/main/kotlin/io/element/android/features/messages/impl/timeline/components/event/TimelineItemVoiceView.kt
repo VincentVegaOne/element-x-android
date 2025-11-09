@@ -161,31 +161,41 @@ fun TimelineItemVoiceView(
             )
             Spacer(Modifier.width(8.dp))
 
-            // Custom waveform colors with gradient
+            // Enhanced waveform with vibrant gradient colors
+            // Unplayed portion: Subtle gray gradient
             val waveformBrush = Brush.horizontalGradient(
                 colors = listOf(
-                    ElementTheme.colors.iconQuaternary.copy(alpha = 0.6f),
-                    ElementTheme.colors.iconQuaternary.copy(alpha = 0.8f),
+                    Color(0xFFCCCCCC), // Light gray
+                    Color(0xFFAAAAAA), // Medium gray
                 )
             )
+
+            // Played portion: Vibrant blue-to-purple gradient (inspired by modern audio apps)
             val progressBrush = Brush.horizontalGradient(
                 colors = listOf(
-                    Color(0xFF0DBD8B), // Vibrant teal/green
-                    Color(0xFF0E9F6E), // Darker teal
+                    Color(0xFF0D6EFD), // Vibrant blue
+                    Color(0xFF6610F2), // Purple
+                    Color(0xFF0D6EFD), // Back to blue for shimmer effect
                 )
             )
-            val cursorBrush = SolidColor(Color(0xFF0DBD8B)) // Matching vibrant teal
+
+            // Cursor: Bright accent color that stands out
+            val cursorBrush = SolidColor(Color(0xFFFFFFFF)) // White cursor for maximum contrast
 
             WaveformPlaybackView(
                 showCursor = state.showCursor,
                 playbackProgress = state.progress,
                 waveform = content.waveform,
-                modifier = Modifier.height(34.dp).weight(1f),
+                modifier = Modifier
+                    .height(42.dp) // Increased height for better visibility
+                    .weight(1f),
                 seekEnabled = !isTalkbackActive(),
                 onSeek = { state.eventSink(VoiceMessageEvents.Seek(it)) },
                 brush = waveformBrush,
                 progressBrush = progressBrush,
                 cursorBrush = cursorBrush,
+                lineWidth = 3.dp, // Thicker lines for better visibility
+                linePadding = 3.dp, // More spacing between bars
             )
             Spacer(Modifier.width(8.dp))
 
