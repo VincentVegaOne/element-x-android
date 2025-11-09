@@ -371,7 +371,7 @@ private fun MessagesViewContent(
     onMessageLongClick: (TimelineItem.Event) -> Unit,
     onSendLocationClick: () -> Unit,
     onCreatePollClick: () -> Unit,
-    onJoinCallClick: () -> Unit,
+    onJoinCallClick: (videoEnabled: Boolean) -> Unit,
     onViewAllPinnedMessagesClick: () -> Unit,
     forceJumpToBottomVisibility: Boolean,
     onSwipeToReply: (TimelineItem.Event) -> Unit,
