@@ -291,7 +291,8 @@ class MessagesPresenter(
             pinnedMessagesBannerState = pinnedMessagesBannerState,
             dmUserVerificationState = dmUserVerificationState,
             roomMemberModerationState = roomMemberModerationState,
-            successorRoom = roomInfo.successorRoom
+            successorRoom = roomInfo.successorRoom,
+            activeMembersCount = roomInfo.activeMembersCount
         ) { handleEvents(it) }
     }
 

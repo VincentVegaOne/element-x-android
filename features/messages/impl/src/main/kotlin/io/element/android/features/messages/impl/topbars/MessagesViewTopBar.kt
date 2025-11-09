@@ -61,6 +61,7 @@ internal fun MessagesViewTopBar(
     isTombstoned: Boolean,
     heroes: ImmutableList<AvatarData>,
     roomCallState: RoomCallState,
+    activeMembersCount: Long,
     dmUserIdentityState: IdentityState?,
     onRoomDetailsClick: () -> Unit,
     onJoinCallClick: () -> Unit,
@@ -112,6 +113,7 @@ internal fun MessagesViewTopBar(
         actions = {
             CallMenuItem(
                 roomCallState = roomCallState,
+                activeMembersCount = activeMembersCount,
                 onJoinCallClick = onJoinCallClick,
             )
             Spacer(Modifier.width(8.dp))
@@ -167,6 +169,7 @@ internal fun MessagesViewTopBarPreview() = ElementPreview {
         isTombstoned: Boolean = false,
         heroes: ImmutableList<AvatarData> = persistentListOf(),
         roomCallState: RoomCallState = RoomCallState.Unavailable,
+        activeMembersCount: Long = 2,
         dmUserIdentityState: IdentityState? = null,
     ) = MessagesViewTopBar(
         roomName = roomName,
@@ -174,6 +177,7 @@ internal fun MessagesViewTopBarPreview() = ElementPreview {
         isTombstoned = isTombstoned,
         heroes = heroes,
         roomCallState = roomCallState,
+        activeMembersCount = activeMembersCount,
         dmUserIdentityState = dmUserIdentityState,
         onRoomDetailsClick = {},
         onJoinCallClick = {},

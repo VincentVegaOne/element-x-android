@@ -197,6 +197,7 @@ fun MessagesView(
                                 isTombstoned = state.isTombstoned,
                                 heroes = state.heroes,
                                 roomCallState = state.roomCallState,
+                                activeMembersCount = state.activeMembersCount,
                                 dmUserIdentityState = state.dmUserVerificationState,
                                 onBackClick = { hidingKeyboard { onBackClick() } },
                                 onRoomDetailsClick = { hidingKeyboard { onRoomDetailsClick() } },

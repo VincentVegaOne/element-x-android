@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.vector.ImageVector
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.roomcall.api.RoomCallState
@@ -34,6 +35,7 @@ import io.element.android.libraries.ui.strings.CommonStrings
 @Composable
 internal fun CallMenuItem(
     roomCallState: RoomCallState,
+    activeMembersCount: Long,
     onJoinCallClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -44,6 +46,7 @@ internal fun CallMenuItem(
         is RoomCallState.StandBy -> {
             StandByCallMenuItem(
                 roomCallState = roomCallState,
+                activeMembersCount = activeMembersCount,
                 onJoinCallClick = onJoinCallClick,
                 modifier = modifier,
             )
@@ -51,6 +54,7 @@ internal fun CallMenuItem(
         is RoomCallState.OnGoing -> {
             OnGoingCallMenuItem(
                 roomCallState = roomCallState,
+                activeMembersCount = activeMembersCount,
                 onJoinCallClick = onJoinCallClick,
                 modifier = modifier,
             )
@@ -61,6 +65,7 @@ internal fun CallMenuItem(
 @Composable
 private fun StandByCallMenuItem(
     roomCallState: RoomCallState.StandBy,
+    activeMembersCount: Long,
     onJoinCallClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -70,7 +75,7 @@ private fun StandByCallMenuItem(
         enabled = roomCallState.canStartCall,
     ) {
         Icon(
-            imageVector = CompoundIcons.VideoCallSolid(),
+            imageVector = getCallIcon(activeMembersCount),
             contentDescription = stringResource(CommonStrings.a11y_start_call),
         )
     }
@@ -79,6 +84,7 @@ private fun StandByCallMenuItem(
 @Composable
 private fun OnGoingCallMenuItem(
     roomCallState: RoomCallState.OnGoing,
+    activeMembersCount: Long,
     onJoinCallClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -95,7 +101,7 @@ private fun OnGoingCallMenuItem(
         ) {
             Icon(
                 modifier = Modifier.size(20.dp),
-                imageVector = CompoundIcons.VideoCallSolid(),
+                imageVector = getCallIcon(activeMembersCount),
                 contentDescription = null
             )
             Spacer(Modifier.width(8.dp))
@@ -111,6 +117,15 @@ private fun OnGoingCallMenuItem(
     }
 }
 
+@Composable
+private fun getCallIcon(activeMembersCount: Long): ImageVector {
+    return when {
+        activeMembersCount == 2L -> CompoundIcons.VoiceCallSolid()
+        activeMembersCount > 2L -> CompoundIcons.HeadphonesSolid()
+        else -> CompoundIcons.VideoCallSolid()
+    }
+}
+
 @PreviewsDayNight
 @Composable
 internal fun CallMenuItemPreview(
@@ -118,6 +133,7 @@ internal fun CallMenuItemPreview(
 ) = ElementPreview {
     CallMenuItem(
         roomCallState = roomCallState,
+        activeMembersCount = 2L,
         onJoinCallClick = {}
     )
 }
