@@ -78,6 +78,18 @@ interface VoiceMessagePlayer {
      */
     fun seekTo(positionMs: Long)
 
+    /**
+     * Set the playback speed.
+     *
+     * @param speed The playback speed (0.5 = half speed, 1.0 = normal, 2.0 = double speed)
+     */
+    fun setPlaybackSpeed(speed: Float)
+
+    /**
+     * Get the current playback speed.
+     */
+    fun getPlaybackSpeed(): Float
+
     data class State(
         /**
          * Whether the player is ready to play.
@@ -99,6 +111,10 @@ interface VoiceMessagePlayer {
          * The duration of the current content, if available.
          */
         val duration: Long?,
+        /**
+         * The current playback speed (0.5 = half speed, 1.0 = normal, 2.0 = double speed).
+         */
+        val playbackSpeed: Float = 1.0f,
     )
 }
 
@@ -147,7 +163,8 @@ class DefaultVoiceMessagePlayer(
             isPlaying = false,
             isEnded = false,
             currentPosition = 0L,
-            duration = null
+            duration = null,
+            playbackSpeed = 1.0f,
         )
     )
 
@@ -160,6 +177,7 @@ class DefaultVoiceMessagePlayer(
                     isEnded = mediaPlayerState.isEnded,
                     currentPosition = mediaPlayerState.currentPosition,
                     duration = mediaPlayerState.duration,
+                    playbackSpeed = mediaPlayerState.playbackSpeed,
                 )
             }
         } else {
@@ -176,6 +194,7 @@ class DefaultVoiceMessagePlayer(
             isEnded = internalState.isEnded,
             currentPosition = internalState.currentPosition,
             duration = internalState.duration,
+            playbackSpeed = internalState.playbackSpeed,
         )
     }.distinctUntilChanged()
 
@@ -213,6 +232,23 @@ class DefaultVoiceMessagePlayer(
             internalState.update {
                 it.copy(currentPosition = positionMs)
             }
+        }
+    }
+
+    override fun setPlaybackSpeed(speed: Float) {
+        if (inControl()) {
+            mediaPlayer.setPlaybackSpeed(speed)
+        }
+        internalState.update {
+            it.copy(playbackSpeed = speed)
+        }
+    }
+
+    override fun getPlaybackSpeed(): Float {
+        return if (inControl()) {
+            mediaPlayer.state.value.playbackSpeed
+        } else {
+            internalState.value.playbackSpeed
         }
     }
 

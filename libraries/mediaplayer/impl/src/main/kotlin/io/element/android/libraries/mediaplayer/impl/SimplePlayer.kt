@@ -25,6 +25,7 @@ interface SimplePlayer {
     val currentPosition: Long
     val playbackState: Int
     val duration: Long
+    val playbackSpeed: Float
     fun clearMediaItems()
     fun setMediaItem(mediaItem: MediaItem, startPositionMs: Long)
     fun getCurrentMediaItem(): MediaItem?
@@ -33,6 +34,7 @@ interface SimplePlayer {
     fun isPlaying(): Boolean
     fun pause()
     fun seekTo(positionMs: Long)
+    fun setPlaybackSpeed(speed: Float)
     fun release()
     interface Listener {
         fun onIsPlayingChanged(isPlaying: Boolean)
@@ -70,6 +72,8 @@ class DefaultSimplePlayer(
         get() = p.playbackState
     override val duration: Long
         get() = p.duration
+    override val playbackSpeed: Float
+        get() = p.playbackParameters.speed
 
     override fun clearMediaItems() = p.clearMediaItems()
 
@@ -86,6 +90,10 @@ class DefaultSimplePlayer(
     override fun pause() = p.pause()
 
     override fun seekTo(positionMs: Long) = p.seekTo(positionMs)
+
+    override fun setPlaybackSpeed(speed: Float) {
+        p.setPlaybackSpeed(speed)
+    }
 
     override fun release() = p.release()
 }

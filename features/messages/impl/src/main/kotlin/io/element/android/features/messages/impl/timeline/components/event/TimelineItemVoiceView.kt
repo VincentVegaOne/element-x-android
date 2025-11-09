@@ -8,6 +8,7 @@
 package io.element.android.features.messages.impl.timeline.components.event
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
@@ -32,12 +35,15 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
+import io.element.android.features.messages.impl.timeline.components.event.PlaybackSpeedOption.Companion.nextSpeed
+import io.element.android.features.messages.impl.timeline.components.event.PlaybackSpeedOption.Companion.toSpeedLabel
 import io.element.android.features.messages.impl.timeline.components.layout.ContentAvoidingLayoutData
 import io.element.android.features.messages.impl.timeline.model.event.TimelineItemVoiceContent
 import io.element.android.features.messages.impl.timeline.model.event.TimelineItemVoiceContentProvider
@@ -66,6 +72,19 @@ fun TimelineItemVoiceView(
         state.eventSink(VoiceMessageEvents.PlayPause)
     }
 
+    fun skipBackward() {
+        state.eventSink(VoiceMessageEvents.SkipBackward)
+    }
+
+    fun skipForward() {
+        state.eventSink(VoiceMessageEvents.SkipForward)
+    }
+
+    fun cyclePlaybackSpeed() {
+        val nextSpeed = state.playbackSpeed.nextSpeed()
+        state.eventSink(VoiceMessageEvents.SetPlaybackSpeed(nextSpeed))
+    }
+
     val a11y = stringResource(CommonStrings.common_voice_message)
     val a11yActionLabel = stringResource(
         when (state.button) {
@@ -76,7 +95,8 @@ fun TimelineItemVoiceView(
             VoiceMessageState.Button.Disabled -> CommonStrings.error_unknown
         }
     )
-    Row(
+
+    Column(
         modifier = modifier
             .clearAndSetSemantics {
                 contentDescription = a11y
@@ -97,34 +117,95 @@ fun TimelineItemVoiceView(
                     )
                 )
             },
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (!isTalkbackActive()) {
-            when (state.button) {
-                VoiceMessageState.Button.Play -> PlayButton(onClick = ::playPause)
-                VoiceMessageState.Button.Pause -> PauseButton(onClick = ::playPause)
-                VoiceMessageState.Button.Downloading -> ProgressButton()
-                VoiceMessageState.Button.Retry -> RetryButton(onClick = ::playPause)
-                VoiceMessageState.Button.Disabled -> PlayButton(onClick = {}, enabled = false)
+        // Main playback controls row
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (!isTalkbackActive()) {
+                when (state.button) {
+                    VoiceMessageState.Button.Play -> PlayButton(onClick = ::playPause)
+                    VoiceMessageState.Button.Pause -> PauseButton(onClick = ::playPause)
+                    VoiceMessageState.Button.Downloading -> ProgressButton()
+                    VoiceMessageState.Button.Retry -> RetryButton(onClick = ::playPause)
+                    VoiceMessageState.Button.Disabled -> PlayButton(onClick = {}, enabled = false)
+                }
+            }
+            Spacer(Modifier.width(8.dp))
+
+            // Skip backward button
+            if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
+                IconButton(
+                    onClick = { skipBackward() },
+                    modifier = Modifier.size(24.dp),
+                ) {
+                    Icon(
+                        imageVector = CompoundIcons.ArrowLeft(),
+                        contentDescription = "Skip backward 15s",
+                        tint = ElementTheme.colors.iconSecondary,
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
+                Spacer(Modifier.width(4.dp))
+            }
+
+            Text(
+                text = state.time,
+                color = ElementTheme.colors.textSecondary,
+                style = ElementTheme.typography.fontBodySmMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Spacer(Modifier.width(8.dp))
+            WaveformPlaybackView(
+                showCursor = state.showCursor,
+                playbackProgress = state.progress,
+                waveform = content.waveform,
+                modifier = Modifier.height(34.dp).weight(1f),
+                seekEnabled = !isTalkbackActive(),
+                onSeek = { state.eventSink(VoiceMessageEvents.Seek(it)) },
+            )
+            Spacer(Modifier.width(8.dp))
+
+            // Skip forward button
+            if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
+                IconButton(
+                    onClick = { skipForward() },
+                    modifier = Modifier.size(24.dp),
+                ) {
+                    Icon(
+                        imageVector = CompoundIcons.ArrowRight(),
+                        contentDescription = "Skip forward 15s",
+                        tint = ElementTheme.colors.iconSecondary,
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
             }
         }
-        Spacer(Modifier.width(8.dp))
-        Text(
-            text = state.time,
-            color = ElementTheme.colors.textSecondary,
-            style = ElementTheme.typography.fontBodySmMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Spacer(Modifier.width(8.dp))
-        WaveformPlaybackView(
-            showCursor = state.showCursor,
-            playbackProgress = state.progress,
-            waveform = content.waveform,
-            modifier = Modifier.height(34.dp),
-            seekEnabled = !isTalkbackActive(),
-            onSeek = { state.eventSink(VoiceMessageEvents.Seek(it)) },
-        )
+
+        // Playback speed control row
+        if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
+            Spacer(Modifier.height(4.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Spacer(Modifier.width(44.dp)) // Align with waveform
+                Text(
+                    text = state.playbackSpeed.toSpeedLabel(),
+                    style = ElementTheme.typography.fontBodyXsRegular,
+                    color = ElementTheme.colors.textSecondary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable(onClick = ::cyclePlaybackSpeed)
+                        .background(
+                            color = ElementTheme.colors.bgSubtleSecondary,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                )
+            }
+        }
     }
 }
 

@@ -48,6 +48,7 @@ class DefaultMediaPlayer(
                     currentPosition = player.currentPosition,
                     duration = duration,
                     isPlaying = isPlaying,
+                    playbackSpeed = player.playbackSpeed,
                 )
             }
             if (isPlaying) {
@@ -64,6 +65,7 @@ class DefaultMediaPlayer(
                     currentPosition = player.currentPosition,
                     duration = duration,
                     mediaId = mediaItem?.mediaId,
+                    playbackSpeed = player.playbackSpeed,
                 )
             }
         }
@@ -75,6 +77,7 @@ class DefaultMediaPlayer(
                     isEnded = playbackState == Player.STATE_ENDED,
                     currentPosition = player.currentPosition,
                     duration = duration,
+                    playbackSpeed = player.playbackSpeed,
                 )
             }
         }
@@ -155,6 +158,13 @@ class DefaultMediaPlayer(
         player.seekTo(positionMs)
         _state.update {
             it.copy(currentPosition = player.currentPosition)
+        }
+    }
+
+    override fun setPlaybackSpeed(speed: Float) {
+        player.setPlaybackSpeed(speed)
+        _state.update {
+            it.copy(playbackSpeed = player.playbackSpeed)
         }
     }
 

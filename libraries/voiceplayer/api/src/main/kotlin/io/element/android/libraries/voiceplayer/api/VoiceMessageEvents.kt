@@ -10,4 +10,7 @@ package io.element.android.libraries.voiceplayer.api
 sealed interface VoiceMessageEvents {
     data object PlayPause : VoiceMessageEvents
     data class Seek(val percentage: Float) : VoiceMessageEvents
+    data class SetPlaybackSpeed(val speed: Float) : VoiceMessageEvents
+    data object SkipForward : VoiceMessageEvents
+    data object SkipBackward : VoiceMessageEvents
 }

@@ -30,6 +30,17 @@ sealed interface VoiceRecorderState {
     ) : VoiceRecorderState
 
     /**
+     * The recorder is paused during recording.
+     *
+     * @property elapsedTime The elapsed time before pausing.
+     * @property levels The audio levels captured before pausing. All values are between 0 and 1.
+     */
+    data class Paused(
+        val elapsedTime: Duration,
+        val levels: List<Float>,
+    ) : VoiceRecorderState
+
+    /**
      * The recorder has finished recording.
      *
      * @property file The recorded file.

@@ -46,7 +46,8 @@ class VoiceMessagePresenter(
                 isPlaying = false,
                 isEnded = false,
                 currentPosition = 0L,
-                duration = null
+                duration = null,
+                playbackSpeed = 1.0f,
             )
         )
 
@@ -111,6 +112,17 @@ class VoiceMessagePresenter(
                 is VoiceMessageEvents.Seek -> {
                     player.seekTo((event.percentage * duration).toLong())
                 }
+                is VoiceMessageEvents.SetPlaybackSpeed -> {
+                    player.setPlaybackSpeed(event.speed)
+                }
+                is VoiceMessageEvents.SkipForward -> {
+                    val newPosition = (playerState.currentPosition + 15_000).coerceAtMost(duration)
+                    player.seekTo(newPosition)
+                }
+                is VoiceMessageEvents.SkipBackward -> {
+                    val newPosition = (playerState.currentPosition - 15_000).coerceAtLeast(0)
+                    player.seekTo(newPosition)
+                }
             }
         }
 
@@ -119,6 +131,7 @@ class VoiceMessagePresenter(
             progress = progress,
             time = time,
             showCursor = showCursor,
+            playbackSpeed = playerState.playbackSpeed,
             eventSink = ::handleEvent,
         )
     }

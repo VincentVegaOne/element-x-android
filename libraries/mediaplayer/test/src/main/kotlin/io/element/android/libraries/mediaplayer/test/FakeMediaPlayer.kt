@@ -28,7 +28,8 @@ class FakeMediaPlayer(
             isEnded = false,
             mediaId = null,
             currentPosition = 0L,
-            duration = null
+            duration = null,
+            playbackSpeed = 1.0f,
         )
     )
 
@@ -91,6 +92,14 @@ class FakeMediaPlayer(
         _state.update {
             it.copy(
                 currentPosition = positionMs,
+            )
+        }
+    }
+
+    override fun setPlaybackSpeed(speed: Float) {
+        _state.update {
+            it.copy(
+                playbackSpeed = speed,
             )
         }
     }

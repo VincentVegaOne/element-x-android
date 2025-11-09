@@ -47,6 +47,13 @@ interface MediaPlayer : AutoCloseable {
     fun seekTo(positionMs: Long)
 
     /**
+     * Sets the playback speed.
+     *
+     * @param speed The playback speed (0.5 = half speed, 1.0 = normal, 2.0 = double speed)
+     */
+    fun setPlaybackSpeed(speed: Float)
+
+    /**
      * Releases any resources associated with this player.
      */
     override fun close()
@@ -79,5 +86,9 @@ interface MediaPlayer : AutoCloseable {
          * The duration of the current content, if available.
          */
         val duration: Long?,
+        /**
+         * The current playback speed (0.5 = half speed, 1.0 = normal, 2.0 = double speed).
+         */
+        val playbackSpeed: Float = 1.0f,
     )
 }

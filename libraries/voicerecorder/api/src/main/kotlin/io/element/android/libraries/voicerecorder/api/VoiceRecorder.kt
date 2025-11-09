@@ -24,6 +24,21 @@ interface VoiceRecorder {
     suspend fun startRecord()
 
     /**
+     * Pause the current recording.
+     *
+     * Call [resumeRecord] to continue recording or [stopRecord] to finish.
+     */
+    suspend fun pauseRecord()
+
+    /**
+     * Resume a paused recording.
+     *
+     * Call [pauseRecord] to pause again or [stopRecord] to finish.
+     */
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
+    suspend fun resumeRecord()
+
+    /**
      * Stop the current recording.
      *
      * Call [deleteRecording] to delete any recorded audio.
