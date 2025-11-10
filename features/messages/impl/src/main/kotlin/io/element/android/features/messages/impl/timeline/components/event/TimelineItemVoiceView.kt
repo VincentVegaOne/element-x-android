@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -103,8 +102,8 @@ fun TimelineItemVoiceView(
         }
     )
 
-    // Modern card-style container inspired by WhatsApp & Telegram
-    Surface(
+    // Voice message content - integrates seamlessly with timeline message bubble
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .clearAndSetSemantics {
@@ -126,13 +125,7 @@ fun TimelineItemVoiceView(
                     )
                 )
             },
-        shape = RoundedCornerShape(16.dp),
-        color = ElementTheme.colors.bgSubtleSecondary,
-        tonalElevation = 1.dp,
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        ) {
             // Row 1: Play/Pause button and full-width waveform
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -268,7 +261,6 @@ fun TimelineItemVoiceView(
             }
         }
     }
-}
 
 @Composable
 private fun PlayButton(
