@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -126,21 +127,38 @@ fun TimelineItemVoiceView(
                 )
             },
     ) {
-            // Row 1: Play/Pause button and full-width waveform
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                if (!isTalkbackActive()) {
-                    when (state.button) {
-                        VoiceMessageState.Button.Play -> PlayButton(onClick = ::playPause)
-                        VoiceMessageState.Button.Pause -> PauseButton(onClick = ::playPause)
-                        VoiceMessageState.Button.Downloading -> ProgressButton()
-                        VoiceMessageState.Button.Retry -> RetryButton(onClick = ::playPause)
-                        VoiceMessageState.Button.Disabled -> PlayButton(onClick = {}, enabled = false)
-                    }
+        // Row 1: Combined Play/Pause+Speed button and full-width waveform
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            // Combined Play/Pause and Speed control - Telegram-inspired segmented pill design
+            if (!isTalkbackActive()) {
+                when (state.button) {
+                    VoiceMessageState.Button.Play -> CombinedPlaySpeedButton(
+                        isPlaying = false,
+                        speed = state.playbackSpeed,
+                        onPlayPauseClick = ::playPause,
+                        onSpeedClick = ::cyclePlaybackSpeed,
+                    )
+                    VoiceMessageState.Button.Pause -> CombinedPlaySpeedButton(
+                        isPlaying = true,
+                        speed = state.playbackSpeed,
+                        onPlayPauseClick = ::playPause,
+                        onSpeedClick = ::cyclePlaybackSpeed,
+                    )
+                    VoiceMessageState.Button.Downloading -> ProgressButton()
+                    VoiceMessageState.Button.Retry -> RetryButton(onClick = ::playPause)
+                    VoiceMessageState.Button.Disabled -> CombinedPlaySpeedButton(
+                        isPlaying = false,
+                        speed = state.playbackSpeed,
+                        onPlayPauseClick = {},
+                        onSpeedClick = {},
+                        enabled = false,
+                    )
                 }
-                Spacer(Modifier.width(12.dp))
+            }
+            Spacer(Modifier.width(12.dp))
 
                 // Enhanced waveform with vibrant gradient colors - FULL WIDTH
                 // Unplayed portion: Subtle gray gradient
@@ -180,87 +198,123 @@ fun TimelineItemVoiceView(
                 )
             }
 
-            // Row 2: Time (left) | Skip controls (center) | Speed (right) - Spotify-inspired layout
-            if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
-                Spacer(Modifier.height(12.dp))
+        // Row 2: Time (left) | Skip controls (center/right)
+        if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
+            Spacer(Modifier.height(12.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                // Left: Time display
+                Text(
+                    text = state.time,
+                    color = ElementTheme.colors.textPrimary,
+                    style = ElementTheme.typography.fontBodyMdMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+                // Right: Skip controls grouped together
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    // Left: Time display
-                    Text(
-                        text = state.time,
-                        color = ElementTheme.colors.textPrimary,
-                        style = ElementTheme.typography.fontBodyMdMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-
-                    // Center: Skip controls grouped together
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        IconButton(
-                            onClick = { skipBackward() },
-                            modifier = Modifier.size(40.dp),
-                        ) {
-                            Icon(
-                                imageVector = CompoundIcons.ArrowLeft(),
-                                contentDescription = "Skip backward 15s",
-                                tint = ElementTheme.colors.iconSecondary,
-                                modifier = Modifier.size(20.dp),
-                            )
-                        }
-
-                        IconButton(
-                            onClick = { skipForward() },
-                            modifier = Modifier.size(40.dp),
-                        ) {
-                            Icon(
-                                imageVector = CompoundIcons.ArrowRight(),
-                                contentDescription = "Skip forward 15s",
-                                tint = ElementTheme.colors.iconSecondary,
-                                modifier = Modifier.size(20.dp),
-                            )
-                        }
-                    }
-
-                    // Right: Speed control button
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .clickable(onClick = ::cyclePlaybackSpeed)
-                            .background(
-                                color = ElementTheme.colors.bgActionPrimaryRest.copy(alpha = 0.1f),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = ElementTheme.colors.borderInteractivePrimary.copy(alpha = 0.3f),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                    IconButton(
+                        onClick = { skipBackward() },
+                        modifier = Modifier.size(40.dp),
                     ) {
                         Icon(
-                            imageVector = CompoundIcons.PlaySolid(),
-                            contentDescription = null,
-                            tint = ElementTheme.colors.iconAccentTertiary,
-                            modifier = Modifier.size(14.dp),
+                            imageVector = CompoundIcons.ArrowLeft(),
+                            contentDescription = "Skip backward 15s",
+                            tint = ElementTheme.colors.iconSecondary,
+                            modifier = Modifier.size(20.dp),
                         )
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = state.playbackSpeed.toSpeedLabel(),
-                            style = ElementTheme.typography.fontBodySmMedium,
-                            color = ElementTheme.colors.textPrimary,
+                    }
+
+                    IconButton(
+                        onClick = { skipForward() },
+                        modifier = Modifier.size(40.dp),
+                    ) {
+                        Icon(
+                            imageVector = CompoundIcons.ArrowRight(),
+                            contentDescription = "Skip forward 15s",
+                            tint = ElementTheme.colors.iconSecondary,
+                            modifier = Modifier.size(20.dp),
                         )
                     }
                 }
             }
         }
     }
+}
+
+/**
+ * Combined Play/Pause and Speed control button - Telegram-inspired segmented pill design
+ * Left side: Play/Pause icon (larger clickable area)
+ * Right side: Speed label (smaller clickable area)
+ */
+@Composable
+private fun CombinedPlaySpeedButton(
+    isPlaying: Boolean,
+    speed: Float,
+    onPlayPauseClick: () -> Unit,
+    onSpeedClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    Row(
+        modifier = modifier
+            .height(52.dp)
+            .clip(RoundedCornerShape(26.dp)) // Fully rounded pill shape
+            .background(
+                color = if (enabled) ElementTheme.colors.bgCanvasDefault else ElementTheme.colors.bgSubtleSecondary,
+                shape = RoundedCornerShape(26.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // Left side: Play/Pause button (larger)
+        Box(
+            modifier = Modifier
+                .size(52.dp)
+                .clip(CircleShape)
+                .clickable(enabled = enabled, onClick = onPlayPauseClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = if (isPlaying) CompoundIcons.PauseSolid() else CompoundIcons.PlaySolid(),
+                contentDescription = if (isPlaying) "Pause" else "Play",
+                tint = if (enabled) ElementTheme.colors.iconSecondary else ElementTheme.colors.iconDisabled,
+                modifier = Modifier
+                    .padding(vertical = 10.dp)
+                    .size(24.dp),
+            )
+        }
+
+        // Divider
+        Box(
+            modifier = Modifier
+                .width(1.dp)
+                .height(24.dp)
+                .background(ElementTheme.colors.borderDisabled.copy(alpha = 0.3f))
+        )
+
+        // Right side: Speed control (smaller)
+        Box(
+            modifier = Modifier
+                .width(48.dp)
+                .height(52.dp)
+                .clickable(enabled = enabled, onClick = onSpeedClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = speed.toSpeedLabel(),
+                style = ElementTheme.typography.fontBodyMdMedium,
+                color = if (enabled) ElementTheme.colors.textPrimary else ElementTheme.colors.textDisabled,
+            )
+        }
+    }
+}
 
 @Composable
 private fun PlayButton(
