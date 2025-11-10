@@ -62,6 +62,7 @@ fun MessageEventBubble(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
+    widthRatio: Float = MessageEventBubbleDefaults.BUBBLE_WIDTH_RATIO,
     content: @Composable BoxScope.() -> Unit = {},
 ) {
     val clickableModifier = if (isTalkbackActive()) {
@@ -114,7 +115,7 @@ fun MessageEventBubble(
                 .testTag(TestTags.messageBubble)
                 .widthIn(
                     min = MIN_BUBBLE_WIDTH,
-                    max = (constraints.maxWidth * MessageEventBubbleDefaults.BUBBLE_WIDTH_RATIO)
+                    max = (constraints.maxWidth * widthRatio)
                         .toInt()
                         .toDp()
                 )

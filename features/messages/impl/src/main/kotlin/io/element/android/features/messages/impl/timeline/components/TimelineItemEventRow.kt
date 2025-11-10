@@ -455,6 +455,8 @@ private fun TimelineItemEventRowContent(
             isMine = event.isMine,
             timelineRoomInfo = timelineRoomInfo,
         )
+        // Voice messages need more width for better waveform interaction (95% vs default 78%)
+        val widthRatio = if (event.content is TimelineItemVoiceContent) 0.95f else MessageEventBubbleDefaults.BUBBLE_WIDTH_RATIO
         MessageEventBubble(
             modifier = Modifier
                 .constrainAs(message) {
@@ -475,6 +477,7 @@ private fun TimelineItemEventRowContent(
             interactionSource = interactionSource,
             onClick = onContentClick,
             onLongClick = onLongClick,
+            widthRatio = widthRatio,
         ) {
             MessageEventBubbleContent(
                 event = event,
