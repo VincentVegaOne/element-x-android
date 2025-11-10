@@ -248,7 +248,9 @@ fun TimelineItemVoiceView(
                     showCursor = state.showCursor,
                     playbackProgress = state.progress,
                     waveform = content.waveform,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .height(56.dp) // Larger waveform for better touch interaction
+                        .fillMaxWidth(),
                     seekEnabled = !isTalkbackActive(),
                     onSeek = { state.eventSink(VoiceMessageEvents.Seek(it)) },
                     brush = waveformBrush,
