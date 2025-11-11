@@ -23,6 +23,8 @@ sealed interface VoiceMessageState {
         val time: Duration,
         // Values are between 0 and 1
         val waveform: ImmutableList<Float>,
+        val playbackSpeed: Float = 1.0f,
+        val fileSizeBytes: Long? = null,
     ) : VoiceMessageState
 
     data class Recording(
