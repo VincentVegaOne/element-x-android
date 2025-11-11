@@ -7,8 +7,22 @@
 
 package io.element.android.libraries.textcomposer.model
 
+/**
+ * Events for controlling voice message recording.
+ */
 sealed interface VoiceMessageRecorderEvent {
+    /** Start recording */
     data object Start : VoiceMessageRecorderEvent
+
+    /** Stop recording (finalize the recording) */
     data object Stop : VoiceMessageRecorderEvent
+
+    /** Cancel recording (discard the recording) */
     data object Cancel : VoiceMessageRecorderEvent
+
+    /** Pause recording (can be resumed) */
+    data object Pause : VoiceMessageRecorderEvent
+
+    /** Resume a paused recording */
+    data object Resume : VoiceMessageRecorderEvent
 }

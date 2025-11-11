@@ -31,5 +31,6 @@ sealed interface VoiceMessageState {
         val duration: Duration,
         // Values are between 0 and 1
         val levels: ImmutableList<Float>,
+        val isPaused: Boolean = false,
     ) : VoiceMessageState
 }
