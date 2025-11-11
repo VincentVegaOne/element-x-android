@@ -7,12 +7,9 @@
 
 package io.element.android.features.messages.impl.timeline.components.event
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,11 +26,9 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,15 +63,11 @@ import io.element.android.libraries.designsystem.theme.components.IconButton
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 import io.element.android.libraries.ui.utils.time.isTalkbackActive
-import io.element.android.libraries.matrix.api.core.UserId
 import io.element.android.libraries.voiceplayer.api.VoiceMessageEvents
 import io.element.android.libraries.voiceplayer.api.VoiceMessageState
 import io.element.android.libraries.voiceplayer.api.VoiceMessageStateProvider
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TimelineItemVoiceView(
     state: VoiceMessageState,
@@ -84,42 +75,6 @@ fun TimelineItemVoiceView(
     onContentLayoutChange: (ContentAvoidingLayoutData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // DEMO: Sample reactions for demonstration (will be replaced with real data)
-    val sampleReactions = remember {
-        listOf(
-            VoiceMessageTimestampReaction(
-                timestampMs = 15000, // 0:15
-                emoji = "😂",
-                userId = UserId("@alice:example.com"),
-                userName = "Alice"
-            ),
-            VoiceMessageTimestampReaction(
-                timestampMs = 15000, // 0:15
-                emoji = "😂",
-                userId = UserId("@bob:example.com"),
-                userName = "Bob"
-            ),
-            VoiceMessageTimestampReaction(
-                timestampMs = 32000, // 0:32
-                emoji = "❤️",
-                userId = UserId("@carol:example.com"),
-                userName = "Carol"
-            ),
-            VoiceMessageTimestampReaction(
-                timestampMs = 48000, // 0:48
-                emoji = "👍",
-                userId = UserId("@dave:example.com"),
-                userName = "Dave"
-            ),
-        ).toImmutableList()
-    }
-
-    val reactionClusters = remember(sampleReactions) {
-        sampleReactions.toClusters()
-    }
-
-    var waveformWidthPx by remember { mutableFloatStateOf(0f) }
-
     fun playPause() {
         state.eventSink(VoiceMessageEvents.PlayPause)
     }
@@ -135,15 +90,6 @@ fun TimelineItemVoiceView(
     fun cyclePlaybackSpeed() {
         val nextSpeed = state.playbackSpeed.nextSpeed()
         state.eventSink(VoiceMessageEvents.SetPlaybackSpeed(nextSpeed))
-    }
-
-    fun jumpToTimestamp(timestampMs: Long) {
-        // Calculate percentage and seek
-        val durationMs = 60000L // TODO: Get actual duration from state
-        if (durationMs > 0) {
-            val percentage = timestampMs.toFloat() / durationMs.toFloat()
-            state.eventSink(VoiceMessageEvents.Seek(percentage))
-        }
     }
 
     val a11y = stringResource(CommonStrings.common_voice_message)
@@ -214,71 +160,45 @@ fun TimelineItemVoiceView(
             }
             Spacer(Modifier.width(12.dp))
 
-            // Waveform with timestamp reactions overlay
-            Box(
+            // Enhanced waveform with vibrant gradient colors - FULL WIDTH
+            // Unplayed portion: Subtle gray gradient
+            val waveformBrush = Brush.horizontalGradient(
+                colors = listOf(
+                    Color(0xFFCCCCCC), // Light gray
+                    Color(0xFFAAAAAA), // Medium gray
+                )
+            )
+
+            // Played portion: Vibrant blue-to-purple gradient (inspired by modern audio apps)
+            val progressBrush = Brush.horizontalGradient(
+                colors = listOf(
+                    Color(0xFF0D6EFD), // Vibrant blue
+                    Color(0xFF6610F2), // Purple
+                    Color(0xFF0D6EFD), // Back to blue for shimmer effect
+                )
+            )
+
+            // Cursor: Bright accent color that stands out
+            val cursorBrush = SolidColor(Color(0xFFFFFFFF)) // White cursor for maximum contrast
+
+            WaveformPlaybackView(
+                showCursor = state.showCursor,
+                playbackProgress = state.progress,
+                waveform = content.waveform,
                 modifier = Modifier
-                    .height(56.dp)
-                    .weight(1f)
-                    .onSizeChanged {
-                        waveformWidthPx = it.width.toFloat()
-                    }
-            ) {
-                // Enhanced waveform with vibrant gradient colors - FULL WIDTH
-                // Unplayed portion: Subtle gray gradient
-                val waveformBrush = Brush.horizontalGradient(
-                    colors = listOf(
-                        Color(0xFFCCCCCC), // Light gray
-                        Color(0xFFAAAAAA), // Medium gray
-                    )
-                )
-
-                // Played portion: Vibrant blue-to-purple gradient (inspired by modern audio apps)
-                val progressBrush = Brush.horizontalGradient(
-                    colors = listOf(
-                        Color(0xFF0D6EFD), // Vibrant blue
-                        Color(0xFF6610F2), // Purple
-                        Color(0xFF0D6EFD), // Back to blue for shimmer effect
-                    )
-                )
-
-                // Cursor: Bright accent color that stands out
-                val cursorBrush = SolidColor(Color(0xFFFFFFFF)) // White cursor for maximum contrast
-
-                WaveformPlaybackView(
-                    showCursor = state.showCursor,
-                    playbackProgress = state.progress,
-                    waveform = content.waveform,
-                    modifier = Modifier
-                        .height(56.dp) // Larger waveform for better touch interaction
-                        .fillMaxWidth(),
-                    seekEnabled = !isTalkbackActive(),
-                    onSeek = { state.eventSink(VoiceMessageEvents.Seek(it)) },
-                    brush = waveformBrush,
-                    progressBrush = progressBrush,
-                    cursorBrush = cursorBrush,
-                    lineWidth = 3.5.dp, // Thicker lines for better visibility
-                    linePadding = 3.dp, // More spacing between bars
-                )
-
-                // Timestamp reaction overlay - INNOVATIVE FEATURE!
-                if (reactionClusters.isNotEmpty() && waveformWidthPx > 0) {
-                    WaveformReactionOverlay(
-                        reactions = reactionClusters,
-                        durationMs = 60000L, // TODO: Get actual duration
-                        waveformWidthPx = waveformWidthPx,
-                        onReactionClick = { cluster ->
-                            jumpToTimestamp(cluster.timestampMs)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(24.dp) // Position reactions above waveform
-                            .align(Alignment.BottomStart)
-                    )
-                }
-            }
+                    .height(56.dp) // Larger waveform for better touch interaction
+                    .weight(1f),
+                seekEnabled = !isTalkbackActive(),
+                onSeek = { state.eventSink(VoiceMessageEvents.Seek(it)) },
+                brush = waveformBrush,
+                progressBrush = progressBrush,
+                cursorBrush = cursorBrush,
+                lineWidth = 3.5.dp, // Thicker lines for better visibility
+                linePadding = 3.dp, // More spacing between bars
+            )
         }
 
-        // Row 2: Time (left) | Skip controls + Voice Reply (right)
+        // Row 2: Time (left) | Skip controls (right)
         if (state.button in listOf(VoiceMessageState.Button.Play, VoiceMessageState.Button.Pause)) {
             Spacer(Modifier.height(12.dp))
             Row(
@@ -295,7 +215,7 @@ fun TimelineItemVoiceView(
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                // Right: Skip controls + Voice Reply button
+                // Right: Skip controls
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -320,22 +240,6 @@ fun TimelineItemVoiceView(
                             imageVector = CompoundIcons.ArrowRight(),
                             contentDescription = "Skip forward 15s",
                             tint = ElementTheme.colors.iconSecondary,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    }
-
-                    // Voice Reply button - innovative feature!
-                    IconButton(
-                        onClick = {
-                            // TODO: Trigger voice reply recording
-                            // For now, this will be a placeholder
-                        },
-                        modifier = Modifier.size(40.dp),
-                    ) {
-                        Icon(
-                            imageVector = CompoundIcons.MicOnSolid(),
-                            contentDescription = "Reply with voice message",
-                            tint = ElementTheme.colors.iconAccentTertiary,
                             modifier = Modifier.size(20.dp),
                         )
                     }
