@@ -34,20 +34,34 @@ import io.element.android.compound.theme.ElementTheme
 import io.element.android.libraries.designsystem.components.media.drawWaveform
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.GRAPHICS_LAYER_ALPHA
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.WAVEFORM_HEIGHT_RECORDING
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.WAVEFORM_LINE_PADDING
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.WAVEFORM_LINE_WIDTH
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.WAVEFORM_RECORDING_BRUSH
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import java.lang.Float.min
 
-private const val DEFAULT_GRAPHICS_LAYER_ALPHA: Float = 0.99F
-private val waveFormHeight = 26.dp
-
+/**
+ * Live waveform view that displays audio levels in real-time during recording.
+ *
+ * Uses vibrant gradient colors and optimized dimensions to provide excellent
+ * visual feedback during voice message recording.
+ *
+ * @param levels Audio level data points (0.0-1.0), displayed from right to left
+ * @param modifier Modifier for the component
+ * @param brush Brush for drawing the waveform (defaults to vibrant recording gradient)
+ * @param lineWidth Width of individual waveform bars
+ * @param linePadding Space between waveform bars
+ */
 @Composable
 fun LiveWaveformView(
     levels: ImmutableList<Float>,
     modifier: Modifier = Modifier,
-    brush: Brush = SolidColor(ElementTheme.colors.iconQuaternary),
-    lineWidth: Dp = 2.dp,
-    linePadding: Dp = 2.dp,
+    brush: Brush = WAVEFORM_RECORDING_BRUSH,
+    lineWidth: Dp = WAVEFORM_LINE_WIDTH,
+    linePadding: Dp = WAVEFORM_LINE_PADDING,
 ) {
     var canvasSize by remember { mutableStateOf(DpSize(0.dp, 0.dp)) }
 
@@ -63,13 +77,12 @@ fun LiveWaveformView(
         contentAlignment = Alignment.CenterEnd,
         modifier = modifier
                 .fillMaxWidth()
-                .height(waveFormHeight)
                 .onSizeChanged { parentWidth = it.width }
     ) {
         Canvas(
             modifier = Modifier
                     .width(Dp(waveformWidth))
-                    .graphicsLayer(alpha = DEFAULT_GRAPHICS_LAYER_ALPHA)
+                    .graphicsLayer(alpha = GRAPHICS_LAYER_ALPHA)
                     .then(modifier)
         ) {
             val width = min(waveformWidth, parentWidth.toFloat())
@@ -92,11 +105,11 @@ internal fun LiveWaveformViewPreview() = ElementPreview {
     Column {
         LiveWaveformView(
             levels = List(100) { it.toFloat() / 100 }.toImmutableList(),
-            modifier = Modifier.height(34.dp),
+            modifier = Modifier.height(WAVEFORM_HEIGHT_RECORDING),
         )
         LiveWaveformView(
             levels = List(40) { it.toFloat() / 40 }.toImmutableList(),
-            modifier = Modifier.height(34.dp),
+            modifier = Modifier.height(WAVEFORM_HEIGHT_RECORDING),
         )
     }
 }

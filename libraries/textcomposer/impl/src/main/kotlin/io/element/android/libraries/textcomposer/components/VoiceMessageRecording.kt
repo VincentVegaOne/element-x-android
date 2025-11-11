@@ -33,6 +33,16 @@ import io.element.android.compound.theme.ElementTheme
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Text
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.CONTAINER_HORIZONTAL_PADDING_END
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.CONTAINER_HORIZONTAL_PADDING_START
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.CONTAINER_MIN_HEIGHT
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.CONTAINER_VERTICAL_PADDING
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.CONTROL_GROUP_SPACING
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.RECORDING_DOT_ANIMATION_DURATION_MS
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.RECORDING_DOT_SIZE
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.TIME_CONTROL_SPACING
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.WAVEFORM_HEIGHT_RECORDING
+import io.element.android.libraries.textcomposer.components.VoiceMessageConstants.WAVEFORM_RECORDING_BRUSH
 import io.element.android.libraries.ui.utils.time.formatShort
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -52,28 +62,35 @@ internal fun VoiceMessageRecording(
                 color = ElementTheme.colors.bgSubtleSecondary,
                 shape = MaterialTheme.shapes.medium,
             )
-            .padding(start = 12.dp, end = 20.dp, top = 8.dp, bottom = 8.dp)
-            .heightIn(26.dp),
+            .padding(
+                start = CONTAINER_HORIZONTAL_PADDING_START,
+                end = CONTAINER_HORIZONTAL_PADDING_END,
+                top = CONTAINER_VERTICAL_PADDING,
+                bottom = CONTAINER_VERTICAL_PADDING
+            )
+            .heightIn(CONTAINER_MIN_HEIGHT),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RedRecordingDot()
 
-        Spacer(Modifier.size(8.dp))
+        Spacer(Modifier.size(CONTROL_GROUP_SPACING))
 
         // Timer
         Text(
             text = duration.formatShort(),
             color = ElementTheme.colors.textSecondary,
-            style = ElementTheme.typography.fontBodySmMedium
+            style = ElementTheme.typography.fontBodyMdMedium
         )
 
-        Spacer(Modifier.size(20.dp))
+        Spacer(Modifier.size(TIME_CONTROL_SPACING))
 
+        // Live waveform with vibrant gradient colors
         LiveWaveformView(
             modifier = Modifier
-                .height(26.dp)
+                .height(WAVEFORM_HEIGHT_RECORDING)
                 .weight(1f),
-            levels = levels
+            levels = levels,
+            brush = WAVEFORM_RECORDING_BRUSH
         )
     }
 }
@@ -85,14 +102,14 @@ private fun RedRecordingDot() {
         initialValue = 1f,
         targetValue = 0f,
         animationSpec = InfiniteRepeatableSpec(
-            animation = TweenSpec(durationMillis = 1_000),
+            animation = TweenSpec(durationMillis = RECORDING_DOT_ANIMATION_DURATION_MS),
             repeatMode = RepeatMode.Reverse,
         ),
         label = "RedRecordingDotAlpha",
     )
     Box(
         modifier = Modifier
-            .size(8.dp)
+            .size(RECORDING_DOT_SIZE)
             .alpha(alpha)
             .background(color = ElementTheme.colors.textCriticalPrimary, shape = CircleShape)
     )
