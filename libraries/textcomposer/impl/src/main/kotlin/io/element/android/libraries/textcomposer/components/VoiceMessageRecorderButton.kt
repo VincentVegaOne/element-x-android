@@ -8,13 +8,19 @@
 package io.element.android.libraries.textcomposer.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
@@ -25,12 +31,22 @@ import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.IconButton
 import io.element.android.libraries.designsystem.utils.CommonDrawables
 import io.element.android.libraries.textcomposer.model.VoiceMessageRecorderEvent
+import io.element.android.libraries.textcomposer.model.VoiceMessageRecordingMode
 
+/**
+ * Voice message recorder button with support for both TAP and HOLD recording modes.
+ *
+ * @param isRecording Whether recording is currently active
+ * @param onEvent Event handler for recorder events
+ * @param modifier Optional modifier
+ * @param recordingMode Recording mode (TAP or HOLD). Default is TAP.
+ */
 @Composable
 internal fun VoiceMessageRecorderButton(
     isRecording: Boolean,
     onEvent: (VoiceMessageRecorderEvent) -> Unit,
     modifier: Modifier = Modifier,
+    recordingMode: VoiceMessageRecordingMode = VoiceMessageRecordingMode.TAP,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
 
@@ -47,12 +63,75 @@ internal fun VoiceMessageRecorderButton(
             }
         )
     } else {
-        StartButton(
-            modifier = modifier,
-            onClick = {
-                performHapticFeedback()
-                onEvent(VoiceMessageRecorderEvent.Start)
+        when (recordingMode) {
+            VoiceMessageRecordingMode.TAP -> {
+                StartButton(
+                    modifier = modifier,
+                    onClick = {
+                        performHapticFeedback()
+                        onEvent(VoiceMessageRecorderEvent.Start)
+                    }
+                )
             }
+            VoiceMessageRecordingMode.HOLD -> {
+                StartButtonHoldMode(
+                    modifier = modifier,
+                    onStartRecording = {
+                        performHapticFeedback()
+                        onEvent(VoiceMessageRecorderEvent.Start)
+                    },
+                    onStopRecording = {
+                        performHapticFeedback()
+                        onEvent(VoiceMessageRecorderEvent.Stop)
+                    }
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Start button for HOLD recording mode.
+ * Long-press to start recording, release to stop automatically.
+ */
+@Composable
+private fun StartButtonHoldMode(
+    onStartRecording: () -> Unit,
+    onStopRecording: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var isHolding by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier
+            .size(48.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = {
+                        if (!isHolding) {
+                            isHolding = true
+                            onStartRecording()
+                        }
+                    },
+                    onPress = {
+                        // Detect press down
+                        val press = tryAwaitRelease()
+                        // On release, if we're holding, stop recording
+                        if (isHolding) {
+                            isHolding = false
+                            onStopRecording()
+                        }
+                    }
+                )
+            },
+        contentAlignment = androidx.compose.ui.Alignment.Center,
+    ) {
+        Icon(
+            modifier = Modifier.size(24.dp),
+            imageVector = CompoundIcons.MicOn(),
+            // Note: accessibility is managed in TextComposer.
+            contentDescription = null,
+            tint = ElementTheme.colors.iconSecondary,
         )
     }
 }
@@ -107,10 +186,29 @@ internal fun VoiceMessageRecorderButtonPreview() = ElementPreview {
         VoiceMessageRecorderButton(
             isRecording = false,
             onEvent = {},
+            recordingMode = VoiceMessageRecordingMode.TAP,
         )
         VoiceMessageRecorderButton(
             isRecording = true,
             onEvent = {},
+            recordingMode = VoiceMessageRecordingMode.TAP,
+        )
+    }
+}
+
+@PreviewsDayNight
+@Composable
+internal fun VoiceMessageRecorderButtonHoldModePreview() = ElementPreview {
+    Row {
+        VoiceMessageRecorderButton(
+            isRecording = false,
+            onEvent = {},
+            recordingMode = VoiceMessageRecordingMode.HOLD,
+        )
+        VoiceMessageRecorderButton(
+            isRecording = true,
+            onEvent = {},
+            recordingMode = VoiceMessageRecordingMode.HOLD,
         )
     }
 }
