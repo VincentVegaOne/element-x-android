@@ -15,6 +15,9 @@ data class VoiceMessageComposerState(
     val voiceMessageState: VoiceMessageState,
     val showPermissionRationaleDialog: Boolean,
     val showSendFailureDialog: Boolean,
+    val showLowSpaceDialog: Boolean,
+    val lowSpaceAvailableMB: Double,
+    val lowSpaceIsCritical: Boolean,
     val keepScreenOn: Boolean,
     val eventSink: (VoiceMessageComposerEvents) -> Unit,
 )

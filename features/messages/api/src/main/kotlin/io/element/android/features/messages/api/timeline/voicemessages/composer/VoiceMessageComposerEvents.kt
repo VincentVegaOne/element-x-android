@@ -24,4 +24,6 @@ sealed interface VoiceMessageComposerEvents {
     data object DismissPermissionsRationale : VoiceMessageComposerEvents
     data class LifecycleEvent(val event: Lifecycle.Event) : VoiceMessageComposerEvents
     data object DismissSendFailureDialog : VoiceMessageComposerEvents
+    data object DismissLowSpaceDialog : VoiceMessageComposerEvents
+    data object ProceedWithLowSpace : VoiceMessageComposerEvents
 }
