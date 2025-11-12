@@ -298,7 +298,13 @@ fun TextComposer(
                     onSeek = onSeekVoiceMessage,
                 )
             is VoiceMessageState.Recording ->
-                VoiceMessageRecording(voiceMessageState.levels, voiceMessageState.duration)
+                VoiceMessageRecording(
+                    levels = voiceMessageState.levels,
+                    duration = voiceMessageState.duration,
+                    isPaused = voiceMessageState.isPaused,
+                    onPause = { onVoiceRecorderEvent(VoiceMessageRecorderEvent.Pause) },
+                    onResume = { onVoiceRecorderEvent(VoiceMessageRecorderEvent.Resume) },
+                )
             VoiceMessageState.Idle -> {}
         }
     }
