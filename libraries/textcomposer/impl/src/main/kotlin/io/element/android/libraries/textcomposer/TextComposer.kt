@@ -72,7 +72,7 @@ import io.element.android.libraries.testtags.testTag
 import io.element.android.libraries.textcomposer.components.SendButton
 import io.element.android.libraries.textcomposer.components.TextFormatting
 import io.element.android.libraries.textcomposer.components.VoiceMessageDeleteButton
-import io.element.android.libraries.textcomposer.components.VoiceMessagePreview
+import io.element.android.libraries.textcomposer.components.VoiceMessagePreviewEnhanced
 import io.element.android.libraries.textcomposer.components.VoiceMessageRecorderButton
 import io.element.android.libraries.textcomposer.components.VoiceMessageRecording
 import io.element.android.libraries.textcomposer.components.markdown.MarkdownTextInput
@@ -136,6 +136,18 @@ fun TextComposer(
 
     val onSeekVoiceMessage = { position: Float ->
         onVoicePlayerEvent(VoiceMessagePlayerEvent.Seek(position))
+    }
+
+    val onCycleSpeedClick = {
+        onVoicePlayerEvent(VoiceMessagePlayerEvent.CycleSpeed)
+    }
+
+    val onSkipBackwardClick = {
+        onVoicePlayerEvent(VoiceMessagePlayerEvent.SkipBackward)
+    }
+
+    val onSkipForwardClick = {
+        onVoicePlayerEvent(VoiceMessagePlayerEvent.SkipForward)
     }
 
     val layoutModifier = modifier
@@ -286,16 +298,21 @@ fun TextComposer(
     val voiceRecording = @Composable {
         when (voiceMessageState) {
             is VoiceMessageState.Preview ->
-                VoiceMessagePreview(
+                VoiceMessagePreviewEnhanced(
                     isInteractive = !voiceMessageState.isSending,
                     isPlaying = voiceMessageState.isPlaying,
                     showCursor = voiceMessageState.showCursor,
                     waveform = voiceMessageState.waveform,
-                    playbackProgress = voiceMessageState.playbackProgress,
                     time = voiceMessageState.time,
+                    playbackSpeed = voiceMessageState.playbackSpeed,
+                    playbackProgress = voiceMessageState.playbackProgress,
                     onPlayClick = onPlayVoiceMessageClick,
                     onPauseClick = onPauseVoiceMessageClick,
+                    onSpeedClick = onCycleSpeedClick,
                     onSeek = onSeekVoiceMessage,
+                    onSkipBackward = onSkipBackwardClick,
+                    onSkipForward = onSkipForwardClick,
+                    fileSize = voiceMessageState.fileSizeBytes?.let { formatFileSize(it) },
                 )
             is VoiceMessageState.Recording ->
                 VoiceMessageRecording(
@@ -940,6 +957,22 @@ private fun ATextComposer(
         resolveAtRoomMentionDisplay = { TextDisplay.Plain },
         onSelectRichContent = null,
     )
+}
+
+/**
+ * Formats file size in bytes to human-readable format.
+ *
+ * Examples:
+ * - 1024 → "1.0 KB"
+ * - 1048576 → "1.0 MB"
+ * - 2621440 → "2.5 MB"
+ */
+private fun formatFileSize(bytes: Long): String {
+    return when {
+        bytes < 1024 -> "$bytes B"
+        bytes < 1024 * 1024 -> String.format("%.1f KB", bytes / 1024.0)
+        else -> String.format("%.1f MB", bytes / (1024.0 * 1024.0))
+    }
 }
 
 fun aMessageComposerModeEdit(
