@@ -56,9 +56,13 @@ internal fun VoiceMessageRecording(
     modifier: Modifier = Modifier,
     onCancel: (() -> Unit)? = null,
     onHapticFeedback: () -> Unit = {},
+    showAudioLevelMonitor: Boolean = true,
 ) {
     // State for slide-to-cancel gesture
     val (slideToCancelState, updateSlideToCancelState) = rememberSlideToCancelState()
+
+    // State for audio level monitoring
+    val audioLevelState = rememberAudioLevelMonitorState(levels)
 
     Row(
         modifier = modifier
@@ -105,6 +109,15 @@ internal fun VoiceMessageRecording(
                 color = ElementTheme.colors.textSecondary,
                 style = ElementTheme.typography.fontBodyMdMedium
             )
+
+            // Audio level indicator (shows only when there's an issue)
+            if (showAudioLevelMonitor) {
+                Spacer(Modifier.size(8.dp))
+                VoiceMessageAudioLevelIndicator(
+                    level = audioLevelState.qualityLevel,
+                    averageLevel = audioLevelState.averageLevel,
+                )
+            }
         }
 
         Spacer(Modifier.size(TIME_CONTROL_SPACING))
@@ -155,6 +168,26 @@ internal fun VoiceMessageRecordingWithCancelPreview() = ElementPreview {
     VoiceMessageRecording(
         levels = List(100) { it.toFloat() / 100 }.toImmutableList(),
         duration = 45.seconds,
+        onCancel = {},
+    )
+}
+
+@PreviewsDayNight
+@Composable
+internal fun VoiceMessageRecordingTooQuietPreview() = ElementPreview {
+    VoiceMessageRecording(
+        levels = List(20) { 0.02f }.toImmutableList(), // Very low levels
+        duration = 12.seconds,
+        onCancel = {},
+    )
+}
+
+@PreviewsDayNight
+@Composable
+internal fun VoiceMessageRecordingClippingPreview() = ElementPreview {
+    VoiceMessageRecording(
+        levels = List(20) { 0.98f }.toImmutableList(), // Very high levels
+        duration = 8.seconds,
         onCancel = {},
     )
 }
