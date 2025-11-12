@@ -54,7 +54,12 @@ internal fun VoiceMessageRecording(
     levels: ImmutableList<Float>,
     duration: Duration,
     modifier: Modifier = Modifier,
+    onCancel: (() -> Unit)? = null,
+    onHapticFeedback: () -> Unit = {},
 ) {
+    // State for slide-to-cancel gesture
+    val (slideToCancelState, updateSlideToCancelState) = rememberSlideToCancelState()
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -68,19 +73,39 @@ internal fun VoiceMessageRecording(
                 top = CONTAINER_VERTICAL_PADDING,
                 bottom = CONTAINER_VERTICAL_PADDING
             )
-            .heightIn(CONTAINER_MIN_HEIGHT),
+            .heightIn(CONTAINER_MIN_HEIGHT)
+            .then(
+                if (onCancel != null) {
+                    Modifier.slideToCancelGesture(
+                        enabled = true,
+                        onDragProgress = updateSlideToCancelState,
+                        onCancel = onCancel,
+                        onHapticFeedback = onHapticFeedback,
+                    )
+                } else {
+                    Modifier
+                }
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        RedRecordingDot()
+        // Show cancel indicator if dragging
+        if (slideToCancelState.shouldShowIndicator && onCancel != null) {
+            VoiceMessageCancelIndicator(
+                dragProgress = slideToCancelState.dragProgress,
+            )
+        } else {
+            // Normal recording UI
+            RedRecordingDot()
 
-        Spacer(Modifier.size(CONTROL_GROUP_SPACING))
+            Spacer(Modifier.size(CONTROL_GROUP_SPACING))
 
-        // Timer
-        Text(
-            text = duration.formatShort(),
-            color = ElementTheme.colors.textSecondary,
-            style = ElementTheme.typography.fontBodyMdMedium
-        )
+            // Timer
+            Text(
+                text = duration.formatShort(),
+                color = ElementTheme.colors.textSecondary,
+                style = ElementTheme.typography.fontBodyMdMedium
+            )
+        }
 
         Spacer(Modifier.size(TIME_CONTROL_SPACING))
 
@@ -118,5 +143,18 @@ private fun RedRecordingDot() {
 @PreviewsDayNight
 @Composable
 internal fun VoiceMessageRecordingPreview() = ElementPreview {
-    VoiceMessageRecording(List(100) { it.toFloat() / 100 }.toImmutableList(), 0.seconds)
+    VoiceMessageRecording(
+        levels = List(100) { it.toFloat() / 100 }.toImmutableList(),
+        duration = 45.seconds,
+    )
+}
+
+@PreviewsDayNight
+@Composable
+internal fun VoiceMessageRecordingWithCancelPreview() = ElementPreview {
+    VoiceMessageRecording(
+        levels = List(100) { it.toFloat() / 100 }.toImmutableList(),
+        duration = 45.seconds,
+        onCancel = {},
+    )
 }

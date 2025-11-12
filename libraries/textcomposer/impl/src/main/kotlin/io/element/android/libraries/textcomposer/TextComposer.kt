@@ -38,6 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
@@ -297,8 +299,15 @@ fun TextComposer(
                     onPauseClick = onPauseVoiceMessageClick,
                     onSeek = onSeekVoiceMessage,
                 )
-            is VoiceMessageState.Recording ->
-                VoiceMessageRecording(voiceMessageState.levels, voiceMessageState.duration)
+            is VoiceMessageState.Recording -> {
+                val hapticFeedback = LocalHapticFeedback.current
+                VoiceMessageRecording(
+                    levels = voiceMessageState.levels,
+                    duration = voiceMessageState.duration,
+                    onCancel = { onVoiceRecorderEvent(VoiceMessageRecorderEvent.Cancel) },
+                    onHapticFeedback = { hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress) },
+                )
+            }
             VoiceMessageState.Idle -> {}
         }
     }
