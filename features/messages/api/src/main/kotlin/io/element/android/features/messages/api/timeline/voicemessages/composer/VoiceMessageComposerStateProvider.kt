@@ -24,10 +24,16 @@ fun aVoiceMessageComposerState(
     keepScreenOn: Boolean = false,
     showPermissionRationaleDialog: Boolean = false,
     showSendFailureDialog: Boolean = false,
+    showLowSpaceDialog: Boolean = false,
+    lowSpaceAvailableMB: Double = 0.0,
+    lowSpaceIsCritical: Boolean = false,
 ) = VoiceMessageComposerState(
     voiceMessageState = voiceMessageState,
     showPermissionRationaleDialog = showPermissionRationaleDialog,
     showSendFailureDialog = showSendFailureDialog,
+    showLowSpaceDialog = showLowSpaceDialog,
+    lowSpaceAvailableMB = lowSpaceAvailableMB,
+    lowSpaceIsCritical = lowSpaceIsCritical,
     keepScreenOn = keepScreenOn,
     eventSink = {},
 )
