@@ -44,6 +44,8 @@
   <string name="a11y_send_files">"Send files"</string>
   <string name="a11y_session_verification_time_limited_action_required">"Time limited action required, you have one minute to verify"</string>
   <string name="a11y_show_password">"Show password"</string>
+  <string name="a11y_skip_backward">"Skip backward 15 seconds"</string>
+  <string name="a11y_skip_forward">"Skip forward 15 seconds"</string>
   <string name="a11y_start_call">"Start a call"</string>
   <string name="a11y_tombstoned_room">"Tombstoned room"</string>
   <string name="a11y_user_avatar">"User avatar"</string>
