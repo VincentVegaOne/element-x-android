@@ -40,7 +40,13 @@ class DefaultAppIconService(
         val packageManager = context.packageManager
         val packageName = context.packageName
 
+        // Save the preference FIRST, before changing component state
+        // This ensures the preference is saved even if the app restarts
+        appPreferencesStore.setAppIcon(appIcon)
+
         // Disable all icon aliases except the selected one
+        // Note: Changing launcher activity aliases requires the app to restart.
+        // We use flags = 0 to allow a graceful restart.
         AppIcon.entries.forEach { icon ->
             val componentName = ComponentName(packageName, icon.componentName)
             val newState = if (icon == appIcon) {
@@ -52,12 +58,9 @@ class DefaultAppIconService(
             packageManager.setComponentEnabledSetting(
                 componentName,
                 newState,
-                PackageManager.DONT_KILL_APP
+                0 // Allow the system to restart the app to apply icon changes
             )
         }
-
-        // Save the preference
-        appPreferencesStore.setAppIcon(appIcon)
     }
 
     override fun getCurrentIcon(): AppIcon {
