@@ -124,6 +124,14 @@ class DefaultVoiceMessageComposerPresenter(
                     Timber.v("Voice message cancel button tapped")
                     localCoroutineScope.cancelRecording()
                 }
+                VoiceMessageRecorderEvent.Pause -> {
+                    Timber.v("Voice message pause button pressed")
+                    // Pause not yet implemented in VoiceRecorder
+                }
+                VoiceMessageRecorderEvent.Resume -> {
+                    Timber.v("Voice message resume button pressed")
+                    // Resume not yet implemented in VoiceRecorder
+                }
             }
         }
         val onPlayerEvent = { event: VoiceMessagePlayerEvent ->
@@ -132,6 +140,18 @@ class DefaultVoiceMessageComposerPresenter(
                     VoiceMessagePlayerEvent.Play -> player.play()
                     VoiceMessagePlayerEvent.Pause -> player.pause()
                     is VoiceMessagePlayerEvent.Seek -> player.seek(event.position)
+                    VoiceMessagePlayerEvent.SkipBackward -> {
+                        // Skip backward 15 seconds - not yet implemented
+                        Timber.v("Skip backward requested")
+                    }
+                    VoiceMessagePlayerEvent.SkipForward -> {
+                        // Skip forward 15 seconds - not yet implemented
+                        Timber.v("Skip forward requested")
+                    }
+                    VoiceMessagePlayerEvent.CycleSpeed -> {
+                        // Cycle playback speed - not yet implemented
+                        Timber.v("Cycle speed requested")
+                    }
                 }
             }
         }
@@ -191,6 +211,14 @@ class DefaultVoiceMessageComposerPresenter(
                 VoiceMessageComposerEvents.AcceptPermissionRationale -> onAcceptPermissionsRationale()
                 is VoiceMessageComposerEvents.LifecycleEvent -> onLifecycleEvent(event.event)
                 VoiceMessageComposerEvents.DismissSendFailureDialog -> onDismissSendFailureDialog()
+                VoiceMessageComposerEvents.DismissLowSpaceDialog -> {
+                    // Dismiss low space dialog - not yet implemented
+                    Timber.v("Dismiss low space dialog")
+                }
+                VoiceMessageComposerEvents.ProceedWithLowSpace -> {
+                    // Proceed with recording despite low space - not yet implemented
+                    Timber.v("Proceed with low space")
+                }
             }
         }
 
@@ -199,6 +227,7 @@ class DefaultVoiceMessageComposerPresenter(
                 is VoiceRecorderState.Recording -> VoiceMessageState.Recording(
                     duration = state.elapsedTime,
                     levels = state.levels.toImmutableList(),
+                    isPaused = false, // Pause not yet implemented in VoiceRecorder
                 )
                 is VoiceRecorderState.Finished ->
                     previewState(
@@ -210,6 +239,9 @@ class DefaultVoiceMessageComposerPresenter(
             },
             showPermissionRationaleDialog = permissionState.showDialog,
             showSendFailureDialog = showSendFailureDialog,
+            showLowSpaceDialog = false, // Low space check not yet implemented
+            lowSpaceAvailableMB = 0.0,
+            lowSpaceIsCritical = false,
             keepScreenOn = keepScreenOn,
             eventSink = handleEvents,
         )
@@ -224,6 +256,9 @@ class DefaultVoiceMessageComposerPresenter(
         val showCursor by remember(playerState.isStopped, isSending) { derivedStateOf { !playerState.isStopped && !isSending } }
         val playerTime by remember(playerState, recorderState) { derivedStateOf { displayTime(playerState, recorderState) } }
         val waveform by remember(recorderState) { derivedStateOf { recorderState.finishedWaveform() } }
+        val fileSize by remember(recorderState) { derivedStateOf {
+            (recorderState as? VoiceRecorderState.Finished)?.file?.length()
+        }}
 
         return VoiceMessageState.Preview(
             isSending = isSending,
@@ -232,6 +267,8 @@ class DefaultVoiceMessageComposerPresenter(
             playbackProgress = playerState.progress,
             time = playerTime,
             waveform = waveform,
+            playbackSpeed = 1.0f, // Speed control not yet implemented
+            fileSizeBytes = fileSize,
         )
     }
 
